@@ -15,7 +15,7 @@ interface StoreProviderProps {
 }
 
 // useRef instead of direct store import
-// Ensures a single store instance across the app
+// Ensures a single store instance  across the app
 // Prevents store from being recreated on every render
 const StoreProvider = ({ children }: StoreProviderProps) => {
   const storeRef = useRef<AppStore | null>(null);
