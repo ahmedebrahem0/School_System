@@ -11,7 +11,7 @@ import { transformResponse } from "@/lib/utils/transformResponse";
 // ─────────────────────────────────────────────────────
 // BASE URL
 // ─────────────────────────────────────────────────────
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
 // ─────────────────────────────────────────────────────
 // BASE QUERY

@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import type { LoginResponse } from "@/types/api.types";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
 // Cookie configuration
 // Used to set consistent cookie options
