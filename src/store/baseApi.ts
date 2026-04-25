@@ -11,7 +11,7 @@ import { transformResponse } from "@/lib/utils/transformResponse";
 // ─────────────────────────────────────────────────────
 // BASE URL
 // ─────────────────────────────────────────────────────
-const BASE_URL = "https://schooolsystem.runasp.net";
+const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 // ─────────────────────────────────────────────────────
 // BASE QUERY
@@ -32,7 +32,7 @@ const baseQuery = fetchBaseQuery({
 // 3. لو في error → تعامل معاه
 // 4. ارجع النتيجة
 // ─────────────────────────────────────────────────────
-const baseQueryWithErrorHandling: BaseQueryFn
+const baseQueryWithErrorHandling: BaseQueryFn<
   string | FetchArgs,
   unknown,
   FetchBaseQueryError
