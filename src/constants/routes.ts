@@ -80,6 +80,7 @@ export const ROUTES = {
 export const PUBLIC_ROUTES = [
   ROUTES.AUTH.LOGIN,
   ROUTES.AUTH.REGISTER,
+  "/pending",
 ] as const;
 
 // Default redirect after login per role

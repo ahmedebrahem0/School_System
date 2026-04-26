@@ -27,6 +27,36 @@ export interface LoginHandlerResponse {
 }
 
 // ─────────────────────────────────────────────────────
+// LOGIN BACKEND RESPONSE — TWO POSSIBLE SHAPES
+// ─────────────────────────────────────────────────────
+
+// Shape 1: Login successful + role assigned
+export interface LoginSuccessResponse {
+  token: string;
+  user: AuthUser;
+}
+
+// Shape 2: Login successful + role pending
+export interface LoginPendingResponse {
+  token: string;
+  roleStatus: "Pending";
+  message: string;
+}
+
+// Union type — backend can return either shape
+export type BackendLoginResponse =
+  | LoginSuccessResponse
+  | LoginPendingResponse;
+
+// Helper to check which shape we got
+// Used in login/route.ts to handle both cases
+export const isPendingRole = (
+  res: BackendLoginResponse
+): res is LoginPendingResponse => {
+  return "roleStatus" in res && res.roleStatus === "Pending";
+};
+
+// ─────────────────────────────────────────────────────
 // REGISTER
 // ─────────────────────────────────────────────────────
 

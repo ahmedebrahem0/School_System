@@ -1,16 +1,18 @@
 // features/auth/hooks/useLogin.ts
 
-// Login hook — handles authentication flow
-// Sends credentials to Next.js Route Handler
+// Login hook — handles the complete authentication flow
+// Sends credentials to Next.js Route Handler (not directly to backend)
 // Route Handler stores token in HttpOnly Cookie
-// Then updates AuthContext with user data
+// Handles two cases: normal login and pending role
+
+"use client";
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { ROUTES } from "@/constants/routes";
-import type { LoginFormData, LoginHandlerResponse } from "../types";
+import type { LoginFormData } from "../types";
 
 interface UseLoginReturn {
   login: (data: LoginFormData) => Promise<void>;
@@ -35,33 +37,53 @@ export const useLogin = (): UseLoginReturn => {
         body: JSON.stringify(data),
       });
 
-      // Handle error response from Route Handler
+      // ─────────────────────────────────────────────
+      // HANDLE ERROR RESPONSE
+      // Wrong credentials or server error
+      // ─────────────────────────────────────────────
       if (!response.ok) {
         const error = await response.json();
-        toast.error(error.message || "Invalid credentials");
+        toast.error(error.message || "Invalid credentials. Please try again.");
         return;
       }
 
-      // Extract user data from response
-      // Token is already stored in HttpOnly Cookie by Route Handler
-      const { user }: LoginHandlerResponse = await response.json();
+      const result = await response.json();
 
+      // ─────────────────────────────────────────────
+      // CASE 1: Role is Pending
+      // User is authenticated but has no role yet
+      // Redirect to pending page
+      // ─────────────────────────────────────────────
+      if (result.status === "pending") {
+        toast.warning("Your account is pending role assignment.");
+        router.push("/pending");
+        return;
+      }
+
+      // ─────────────────────────────────────────────
+      // CASE 2: Normal login — role is assigned
       // Update AuthContext with user data
-      // This triggers re-render in Sidebar, Header, etc.
-      setUser(user);
+      // Redirect to dashboard or callbackUrl
+      // ─────────────────────────────────────────────
+      setUser(result.user);
 
       // Redirect to callbackUrl if exists
-      // Otherwise redirect to dashboard
+      // Example: user tried to visit /students while logged out
+      // After login → redirect back to /students
       const callbackUrl = searchParams.get("callbackUrl");
       router.push(callbackUrl || ROUTES.DASHBOARD);
+
+      // Refresh server components so middleware sees new cookie
       router.refresh();
 
-      toast.success(`Welcome back, ${user.fullName}!`);
+      toast.success(`Welcome back, ${result.user.fullName}!`);
 
     } catch {
       // Network error or Route Handler is down
       toast.error("Something went wrong. Please try again.");
+
     } finally {
+      // Always reset loading state
       setIsLoading(false);
     }
   };
