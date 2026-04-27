@@ -25,6 +25,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
 
   }),
+  // catches duplicate endpoints
   overrideExisting: false,
 });
 

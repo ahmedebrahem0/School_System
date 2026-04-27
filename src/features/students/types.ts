@@ -1,11 +1,48 @@
 // features/students/types.ts
 
-// Student feature types
-// Based on actual API response from GET /api/Students
+// ─────────────────────────────────────────────────────
+// NESTED TYPES
+// ─────────────────────────────────────────────────────
+export interface StudentClass {
+  classId: number;
+  className: string;
+  schoolGradeID: number | null;
+  schoolGrade: null;
+  students: null[];
+  timetables: unknown[];
+  classSubjects: unknown[];
+  teacherClasses: unknown[];
+}
+
+export interface StudentAttendance {
+  attendanceId: number;
+  studentId: number;
+  date: string;
+  status: "Present" | "Absent" | "Late";
+  student: null; // circular ref removed
+}
+
+export interface StudentSubject {
+  subjectId: number;
+  subjectName: string;
+  grades: unknown[];
+  timetables: unknown[];
+  classSubjects: unknown[];
+  teacherSubjects: null;
+}
+
+export interface StudentGrade {
+  id: number;
+  studentId: number;
+  subjectId: number;
+  grade: number;
+  student: null; // circular ref removed
+  subject: StudentSubject;
+}
 
 // ─────────────────────────────────────────────────────
-// STUDENT
-// Shape after transformResponse strips $id and $values
+// STUDENT — LIST ITEM
+// Shape from GET /api/Students (list)
 // ─────────────────────────────────────────────────────
 export interface Student {
   studentId: number;
@@ -19,6 +56,17 @@ export interface Student {
   applicationUser: null;
   attendances: unknown[];
   grades: unknown[];
+}
+
+// ─────────────────────────────────────────────────────
+// STUDENT DETAILS
+// Shape from GET /api/Students/{id} (single)
+// Has full nested data
+// ─────────────────────────────────────────────────────
+export interface StudentDetails extends Omit<Student, "class" | "attendances" | "grades"> {
+  class: StudentClass | null;
+  attendances: StudentAttendance[];
+  grades: StudentGrade[];
 }
 
 // ─────────────────────────────────────────────────────
