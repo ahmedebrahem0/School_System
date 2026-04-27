@@ -1,41 +1,39 @@
 // lib/utils/transformResponse.ts
 
-// ─────────────────────────────────────────────────────
-// إيه اللي بيعمله؟
-// بيشيل $id و $values من أي response جاي من الـ Backend
-// بيشتغل recursively — يعني لو في nested objects
-// بيعالجهم كمان (زي attendances و grades جوه الـ student)
-// ─────────────────────────────────────────────────────
+// Strips $id, resolves $ref, and unwraps $values
+// Handles ASP.NET circular reference JSON format
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const transformResponse = (data: any): any => {
-  // لو مش object أو null → رجّعه زي ما هو
-  // مثال: string, number, boolean, null
+export const transformResponse = (data: any, refs: Map<string, any> = new Map()): any => {
+
   if (data === null || typeof data !== "object") {
     return data;
-    }
-    
-    // أضف دي: لو الداتا Array صريح من البداية، عالج كل عنصر جواه
-    if (Array.isArray(data)) {
-    return data.map(transformResponse);
   }
 
-  // لو فيه $values → ده array من الـ Backend
-  // نعالج كل عنصر فيه recursively
+  // Store object by its $id for later $ref resolution
+  if ("$id" in data && !("$ref" in data)) {
+    refs.set(data.$id, data);
+  }
+
+  // $ref → circular reference → return null to break the cycle
+  // We don't want to render circular data in the UI
+  if ("$ref" in data) {
+    return null;
+  }
+
+  // $values → unwrap array and process each item
   if ("$values" in data) {
-    return data.$values.map(transformResponse);
+    return data.$values
+      .map((item: any) => transformResponse(item, refs))
+      .filter((item: any) => item !== null); // Remove circular refs
   }
 
-  // لو object عادي → نمشي على كل الـ keys
-  // ونعالج كل value recursively
-  // ونشيل الـ $id من الـ object
+  // Regular object → strip $id, process all values
   const cleaned: Record<string, unknown> = {};
 
   for (const key in data) {
-    // نشيل الـ $id — مش محتاجينه في الـ Frontend
     if (key === "$id") continue;
-
-    cleaned[key] = transformResponse(data[key]);
+    cleaned[key] = transformResponse(data[key], refs);
   }
 
   return cleaned;
