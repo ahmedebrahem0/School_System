@@ -1,5 +1,7 @@
 // app/layout.tsx
-
+/**
+ * 1
+ */
 // Root layout — wraps the entire application
 // Sets up fonts, metadata, providers, and global toast notifications
 // Must remain a Server Component — Providers handle client-side needs
