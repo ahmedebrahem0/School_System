@@ -102,6 +102,7 @@ const NAV_CONFIG: Record<string, NavSection[]> = {
   ],
 
   [ROLES.STUDENT]: [
+    // Student links stay scoped to personal academic data and profile views.
     {
       label: "Overview",
       items: [
@@ -144,6 +145,7 @@ const Sidebar = () => {
           LOGO AREA
           ───────────────────────────────────────────── */}
       <div className="flex items-center gap-3 h-16 px-6 border-b border-white/10 shrink-0">
+        {/* Brand mark anchors the sidebar and keeps the product identity visible. */}
         <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
           <GraduationCap className="w-5 h-5 text-white" />
         </div>
