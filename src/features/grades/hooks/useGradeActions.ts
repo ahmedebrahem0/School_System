@@ -65,7 +65,10 @@ export const useGradeActions = () => {
     },
     [updateMutation, router]
   );
-// 
+/**
+ * commit one
+ * 1
+ */
   const deleteGrade = useCallback(
     async (
       id: number,
