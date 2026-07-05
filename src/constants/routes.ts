@@ -41,12 +41,15 @@ export const ROUTES = {
     LIST: "/students",
     CREATE: "/students/create",
     DETAILS: (id: number) => `/students/${id}`,
+    // EDIT: (id: number) => `/students/${id}/edit`,
+
   },
 
   TEACHERS: {
     LIST: "/teachers",
     CREATE: "/teachers/create",
     DETAILS: (id: number) => `/teachers/${id}`,
+    
   },
 
   CLASSES: {
