@@ -47,6 +47,7 @@ interface NavSection {
 // Centralizes sidebar links so each role gets one predictable navigation shape.
 const NAV_CONFIG: Record<string, NavSection[]> = {
   [ROLES.ADMIN]: [
+    // Admin links cover the full management surface of the school system.
     {
       label: "Overview",
       items: [
