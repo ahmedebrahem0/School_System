@@ -84,6 +84,7 @@ const NAV_CONFIG: Record<string, NavSection[]> = {
   ],
 
   [ROLES.TEACHER]: [
+    // Teacher links focus on the classroom work assigned to the signed-in teacher.
     {
       label: "Overview",
       items: [
