@@ -38,6 +38,8 @@ interface NavSection {
   items: SidebarItemProps[];
 }
 
+// Each section groups related links under the same sidebar heading.
+
 // ─────────────────────────────────────────────────────
 // NAVIGATION CONFIG PER ROLE
 // Single source of truth for all navigation items
