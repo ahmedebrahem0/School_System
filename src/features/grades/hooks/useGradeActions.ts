@@ -70,7 +70,6 @@ export const useGradeActions = () => {
  * 1
  * 2
  * 3
- * 4
  */
   const deleteGrade = useCallback(
     async (
