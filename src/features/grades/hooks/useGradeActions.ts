@@ -69,7 +69,6 @@ export const useGradeActions = () => {
  * commit one
  * 1
  * 2
- * 3
  */
   const deleteGrade = useCallback(
     async (
