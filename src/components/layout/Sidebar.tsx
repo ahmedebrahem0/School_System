@@ -42,6 +42,7 @@ interface NavSection {
 // NAVIGATION CONFIG PER ROLE
 // Single source of truth for all navigation items
 // ─────────────────────────────────────────────────────
+// Centralizes sidebar links so each role gets one predictable navigation shape.
 const NAV_CONFIG: Record<string, NavSection[]> = {
   [ROLES.ADMIN]: [
     {
