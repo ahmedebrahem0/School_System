@@ -122,6 +122,7 @@ const Sidebar = () => {
   const { user } = useAuth();
   const { logout } = useLogout();
 
+  // Avoid rendering navigation until the authenticated user is available.
   if (!user) return null;
 
   // Falls back to an empty navigation list when a role has no configured links yet.
