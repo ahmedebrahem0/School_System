@@ -1,8 +1,8 @@
 // features/students/hooks/useStudents.ts
 
-// Students list hook
-// Handles fetching, searching, filtering, and pagination
-// All pagination and search are client-side
+// Students list hook with search and pagination
+// Handles fetching all students and client-side search + pagination
+// No API calls for search/pagination — all client-side for performance
 
 import { useState, useMemo } from "react";
 import { useGetStudentsQuery } from "../api";
@@ -14,20 +14,22 @@ import type { PaginatedResult } from "@/types/api.types";
 // HOOK OPTIONS
 // ─────────────────────────────────────────────────────
 interface UseStudentsOptions {
-  limit?: number; // Items per page — default 10
+  // Items per page — default 10
+  limit?: number;
 }
 
 // ─────────────────────────────────────────────────────
 // HOOK RETURN TYPE
+// Everything the component needs
 // ─────────────────────────────────────────────────────
 interface UseStudentsReturn {
-  // Paginated data
+  // Paginated data (filtered + paginated)
   result: PaginatedResult<Student>;
 
-  // States
-  isLoading: boolean;
-  isFetching: boolean;
-  isError: boolean;
+  // Loading states
+  isLoading: boolean;  // First load (show skeleton)
+  isFetching: boolean; // Background refetch (show subtle indicator)
+  isError: boolean;    // Error state
 
   // Search
   searchQuery: string;
@@ -49,39 +51,59 @@ export const useStudents = (
 ): UseStudentsReturn => {
   const { limit = 10 } = options;
 
+  // ─────────────────────────────────────────────────
+  // STATE MANAGEMENT
+  // ─────────────────────────────────────────────────
   const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQueryState] = useState("");
 
+  // ─────────────────────────────────────────────────
+  // FETCH ALL STUDENTS
+  // RTK Query handles caching automatically
+  // ─────────────────────────────────────────────────
   const { data, isLoading, isFetching, isError, refetch } =
     useGetStudentsQuery();
 
   // ─────────────────────────────────────────────────
-  // FILTER BY SEARCH QUERY
-  // Client-side search — filters by student name
+  // CLIENT-SIDE SEARCH
+  // Filter by student name (case-insensitive)
   // useMemo prevents recalculation on every render
+  //
+  // Only recalculates when:
+  //   - data changes (new fetch from API)
+  //   - searchQuery changes (user types)
   // ─────────────────────────────────────────────────
   const filteredStudents = useMemo(() => {
     const students = data ?? [];
 
+    // If search is empty, return all students
     if (!searchQuery.trim()) return students;
 
+    // Filter by name (case-insensitive)
     return students.filter((student) =>
       student.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [data, searchQuery]);
 
   // ─────────────────────────────────────────────────
-  // RESET PAGE WHEN SEARCH CHANGES
-  // Prevents being on page 5 with only 1 result
+  // HANDLE SEARCH CHANGE
+  // When user types in search:
+  //   1. Update search query
+  //   2. Reset pagination to page 1
+  //   (prevents being on page 5 with only 1 result)
   // ─────────────────────────────────────────────────
   const handleSearchChange = (query: string) => {
-    setSearchQuery(query);
-    setPage(1); // Reset to first page on search
+    setSearchQueryState(query);
+    setPage(1); // Reset to first page
   };
 
   // ─────────────────────────────────────────────────
-  // PAGINATE FILTERED RESULTS
-  // Client-side pagination using paginate() from api.types
+  // CLIENT-SIDE PAGINATION
+  // Takes filtered students and returns one page
+  // useMemo prevents recalculation unless:
+  //   - filteredStudents changes (search changed)
+  //   - page changes (user clicked pagination)
+  //   - limit changes (usually doesn't)
   // ─────────────────────────────────────────────────
   const result = useMemo(
     () => paginate(filteredStudents, { page, limit }),
@@ -89,14 +111,23 @@ export const useStudents = (
   );
 
   return {
+    // Paginated data
     result,
-    isLoading,
-    isFetching,
-    isError,
+
+    // Loading states
+    isLoading,  // Show skeleton on first load
+    isFetching, // Show subtle indicator during refetch
+    isError,    // Show error message
+
+    // Search
     searchQuery,
     setSearchQuery: handleSearchChange,
+
+    // Pagination
     page,
     setPage,
+
+    // Refetch
     refetch,
   };
 };

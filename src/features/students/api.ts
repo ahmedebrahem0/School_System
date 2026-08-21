@@ -102,10 +102,8 @@ export const studentsApi = baseApi.injectEndpoints({
     // Uses JSON body as per OpenAPI spec
     // Invalidates both list and specific student cache
     // ─────────────────────────────────────────────
-    updateStudent: builder.mutation<
-      void,
-      { id: number; data: UpdateStudentDto }
-    >({
+    updateStudent: builder.mutation<void, { id: number; data: UpdateStudentDto }>
+      ({
       query: ({ id, data }) => ({
         url: API_ENDPOINTS.STUDENTS.BY_ID(id),
         method: "PUT",

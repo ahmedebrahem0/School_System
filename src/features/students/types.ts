@@ -58,6 +58,8 @@ export interface Student {
   grades: unknown[];
 }
 
+
+
 // ─────────────────────────────────────────────────────
 // STUDENT DETAILS
 // Shape from GET /api/Students/{id} (single)
