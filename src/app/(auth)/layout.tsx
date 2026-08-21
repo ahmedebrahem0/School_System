@@ -109,7 +109,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
             © 2026 EduSystem. All rights reserved.
           </p>
         </div>
-
+{/*  */}
       </div>
 
       {/* ─────────────────────────────────────────────
