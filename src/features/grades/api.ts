@@ -2,7 +2,7 @@ import { baseApi } from "@/store/baseApi";
 import { API_ENDPOINTS } from "@/constants/api-endpoints";
 import { CACHE_TIMES } from "@/constants/cache-times";
 import type { CreateGradeDto, Grade, UpdateGradeDto } from "./types";
-// 
+
 export const gradesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getGrades: builder.query<Grade[], void>({
