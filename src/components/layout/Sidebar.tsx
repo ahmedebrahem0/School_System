@@ -128,6 +128,7 @@ const Sidebar = () => {
   const navSections = NAV_CONFIG[user.role] ?? [];
   // Role metadata controls the readable label shown in the profile badge.
   const roleMeta = ROLE_META[user.role];
+  // Initials keep the avatar useful even when there is no profile image.
   const initials = getInitials(user.fullName);
 
   return (
