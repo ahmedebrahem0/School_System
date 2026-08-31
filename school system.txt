@@ -1,0 +1,583 @@
+# School System API - Frontend Guide
+
+آخر تحديث: بعد تجربة Local SQL Server وMonster deployment.
+
+هذا الملف مخصص للـ Frontend. الهدف منه يوضح المشروع، الرولات، الفلوهات، البرمشنز، والـ endpoints المهمة بدون دخول زائد في تفاصيل داخلية.
+
+## 1. ملخص المشروع
+
+School System API هو Backend لإدارة مدرسة. النظام يدعم:
+
+- تسجيل ودخول المستخدمين باستخدام JWT.
+- إدارة المستخدمين وتعيين الرولات.
+- إدارة الطلاب والمدرسين والفصول والمواد والقاعات والحصص الزمنية.
+- ربط المدرس بفصول ومواد.
+- ربط الفصل بمواد.
+- تسجيل الحضور والدرجات.
+- عرض جدول الطالب أو المدرس حسب صلاحياته.
+
+التقنيات الأساسية:
+
+| الجزء | التقنية |
+|---|---|
+| Backend | ASP.NET Core 8 Web API |
+| Database | SQL Server + Entity Framework Core |
+| Auth | ASP.NET Identity + JWT Bearer |
+| Mapping | AutoMapper |
+| Docs/Test UI | Swagger |
+
+## 2. البيئات
+
+استخدم نفس الـ API contract في المحلي وفي Monster. الاختلاف فقط في الـ base URL والـ database connection.
+
+| البيئة | Base URL | ملاحظات |
+|---|---|---|
+| Local | `http://localhost:5172` | يستخدم SQL Server المحلي `SQLEXPRESS` في Development |
+| Monster | `http://schooolsystem.runasp.net` | يستخدم SQL Server الخاص بـ Monster |
+
+ملاحظات مهمة:
+
+- لا تستخدم `https` محليا لو السيرفر شغال `http` فقط.
+- كل protected endpoint يحتاج header:
+
+```http
+Authorization: Bearer {token}
+```
+
+- `Content-Type` غالبا `application/json`، ما عدا إنشاء طالب من endpoint الطلاب يستخدم `multipart/form-data` لأن الأكشن عنده `[FromForm]`.
+
+## 3. المعمارية
+
+المشروع Clean Architecture بأربع طبقات:
+
+| Layer | الدور |
+|---|---|
+| `SchoolSystemApi` | Controllers, Program.cs, Swagger, auth setup |
+| `SchoolSystem.BusinessLogic` | DTOs, interfaces, services, mapping |
+| `SchoolSystem.Domain` | Entities/models الأساسية |
+| `SchoolSystem.Infrastructure` | DbContext, repositories, migrations, UnitOfWork |
+
+قاعدة مهمة: الـ Frontend يتعامل فقط مع API DTOs، وليس entities الداخلية.
+
+## 4. Authentication
+
+### Register
+
+`POST /api/Auth/Register`
+
+Body:
+
+```json
+{
+  "userName": "ahmed",
+  "fullName": "Ahmed Ebrahem",
+  "gender": "male",
+  "email": "student@gmail.com",
+  "password": "Student@123"
+}
+```
+
+النتيجة: المستخدم يتسجل كـ user عادي بدون role. بعدها Admin يعين له role.
+
+### Login
+
+`POST /api/Auth/Login`
+
+Body:
+
+```json
+{
+  "userNameOrEmail": "admin@school.com",
+  "password": "Admin@123!"
+}
+```
+
+الـ response يرجع token وبيانات المستخدم. خزنه في الفرونت واستخدمه في `Authorization` header.
+
+## 5. الرولات والفلو
+
+### Admin
+
+Admin هو صاحب التحكم الكامل.
+
+فلو Admin المعتاد:
+
+1. يعمل login.
+2. يشوف users بدون role من `GET /api/Admin/users-without-role`.
+3. يعين role لأي user من `POST /api/Admin/assign-role`.
+4. ينشئ بيانات النظام الأساسية: subjects, classrooms, time slots, classes.
+5. يربط class بالsubjects.
+6. يربط teacher بالclasses والsubjects.
+7. ينشئ timetable.
+8. يدير students/teachers/grades/attendance حسب الحاجة.
+
+صلاحيات Admin:
+
+- يقرأ ويعدل ويحذف users.
+- يعين ويشيل roles.
+- يدير الطلاب والمدرسين والفصول والمواد والقاعات والحصص الزمنية.
+- يدير العلاقات بين teacher/class/subject.
+- يدير timetable.
+- يدير attendance وgrades.
+
+### Student
+
+Student يشوف بياناته هو فقط.
+
+فلو Student:
+
+1. يعمل register.
+2. ينتظر Admin يعين له role `Student`.
+3. بعد login يقدر يشوف profile والدرجات والجدول والحضور الخاص به.
+
+صلاحيات Student:
+
+- `GET /api/Students/MyProfile`
+- `GET /api/Grades/MyGrades`
+- `GET /api/Timetables/MyTimetable`
+- `GET /api/Students/attendance` بدون `studentName`
+- يقدر يقرأ timetable class بتاعه فقط من endpoints المسموحة.
+
+Student لا يقدر يعدل grades أو attendance أو users.
+
+### Teacher
+
+Teacher يشوف ويتعامل مع البيانات المرتبطة به فقط.
+
+فلو Teacher:
+
+1. يعمل register.
+2. Admin يعين له role `Teacher`.
+3. Admin يعمل teacher profile أو يربطه بكيان teacher.
+4. Admin يربطه بفصول ومواد.
+5. Teacher يقدر يشوف classes/subjects الخاصة به، ويسجل درجات وحضور ضمن نطاقه.
+
+صلاحيات Teacher:
+
+- يشوف `MyProfile`, `MyClasses`, `MySubjects`.
+- يشوف classes والتفاصيل.
+- يقرأ ويضيف ويعدل attendance للطلاب داخل الفصول المرتبط بها.
+- يقرأ ويضيف ويعدل ويحذف grades داخل نطاق المواد والفصول المرتبط بها.
+- يشوف timetable الخاص به أو المرتبط بفصوله/مواده.
+
+Teacher لا يقدر يدير users أو roles أو reference data العامة.
+
+## 6. ترتيب إنشاء البيانات الصحيح
+
+هذا الترتيب يقلل أخطاء الـ 400/404/500 في التجربة:
+
+1. Admin login.
+2. Register user للطالب أو المدرس.
+3. Admin assign role.
+4. Admin ينشئ Subject.
+5. Admin ينشئ Classroom.
+6. Admin ينشئ TimeSlot.
+7. Admin ينشئ Class.
+8. Admin ينشئ/يحدث Student ويضع له `classId`.
+9. Admin ينشئ/يحدث Teacher.
+10. Admin يعمل ClassSubject.
+11. Admin يعمل TeacherClass.
+12. Admin يعمل TeacherSubject.
+13. Admin ينشئ Timetable.
+14. Teacher أو Admin يضيف Attendance/Grades.
+15. Student يجرب MyProfile/MyGrades/MyTimetable.
+
+لو `MyTimetable` رجع 400 للطالب، غالبا الطالب ليس مربوطا بـ class بعد.
+
+## 7. أهم Request Bodies
+
+### Assign Role
+
+`POST /api/Admin/assign-role`
+
+```json
+{
+  "userId": "63cffb9f-f08f-491d-a8dc-1839b1b0404e",
+  "role": "Student"
+}
+```
+
+القيم المتوقعة للـ role:
+
+- `Admin`
+- `Teacher`
+- `Student`
+
+### Update User
+
+`PUT /api/Admin/users/{id}`
+
+```json
+{
+  "userName": "ahmed",
+  "email": "student@gmail.com",
+  "fullName": "Ahmed Ebrahem",
+  "gender": "male"
+}
+```
+
+### Student
+
+`POST /api/Students` يستخدم form-data:
+
+| field | type |
+|---|---|
+| `name` | string |
+| `dateOfBirth` | date مثل `2005-01-20` |
+| `classId` | number |
+
+### Teacher
+
+```json
+{
+  "name": "Mr Ahmed"
+}
+```
+
+### Class
+
+```json
+{
+  "className": "Class A"
+}
+```
+
+### Subject
+
+```json
+{
+  "subjectName": "Math"
+}
+```
+
+### Classroom
+
+```json
+{
+  "roomNumber": "A101",
+  "capacity": 30
+}
+```
+
+### TimeSlot
+
+```json
+{
+  "startTime": "09:00:00",
+  "endTime": "10:00:00"
+}
+```
+
+### ClassSubject
+
+```json
+{
+  "classId": 1,
+  "subjectId": 1
+}
+```
+
+### TeacherClass
+
+```json
+{
+  "teacherId": 1,
+  "classId": 1
+}
+```
+
+### TeacherSubject
+
+```json
+{
+  "teacherId": 1,
+  "subjectId": 1
+}
+```
+
+### Attendance
+
+```json
+{
+  "studentId": 1,
+  "date": "2026-08-31",
+  "status": "Present"
+}
+```
+
+### Grade
+
+```json
+{
+  "studentId": 1,
+  "subjectId": 1,
+  "grade": 95
+}
+```
+
+### Timetable
+
+```json
+{
+  "classId": 1,
+  "subjectId": 1,
+  "dayOfWeek": "Monday",
+  "timeSlotId": 1,
+  "classroomId": 1
+}
+```
+
+## 8. Endpoints والبرمشنز
+
+### Health
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/` | Public | يتأكد أن API شغال |
+| GET | `/health/database` | Public | يتأكد أن قاعدة البيانات متصلة |
+
+### Auth
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| POST | `/api/Auth/Register` | Public | تسجيل user جديد بدون role |
+| POST | `/api/Auth/Login` | Public | Login وإرجاع JWT |
+
+### Admin Users
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/Admin/users` | Admin | كل المستخدمين |
+| GET | `/api/Admin/users/{id}` | Admin | مستخدم واحد |
+| GET | `/api/Admin/users-without-role` | Admin | users محتاجين role |
+| PUT | `/api/Admin/users/{id}` | Admin | تعديل بيانات user |
+| POST | `/api/Admin/assign-role` | Admin | تعيين role |
+| DELETE | `/api/Admin/users/{userId}/roles/{role}` | Admin | إزالة role |
+| DELETE | `/api/Admin/users/{id}` | Admin | حذف user |
+
+### Students
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/Students` | Admin | كل الطلاب |
+| GET | `/api/Students/{id}` | Admin | طالب واحد |
+| GET | `/api/Students/attendance` | Admin, Student | Admin يستخدم `?studentName=...`، Student يرى نفسه |
+| POST | `/api/Students` | Admin | إنشاء طالب |
+| PUT | `/api/Students/{id}` | Admin | تعديل طالب |
+| DELETE | `/api/Students/{id}` | Admin | حذف طالب |
+| GET | `/api/Students/MyProfile` | Student | بيانات الطالب الحالي |
+
+### Teachers
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/Teachers` | Admin | كل المدرسين |
+| GET | `/api/Teachers/{id}` | Admin | مدرس واحد |
+| GET | `/api/Teachers/MyProfile` | Teacher | بيانات المدرس الحالي |
+| GET | `/api/Teachers/MyClasses` | Teacher | فصول المدرس الحالي |
+| GET | `/api/Teachers/MySubjects` | Teacher | مواد المدرس الحالي |
+| POST | `/api/Teachers` | Admin | إنشاء مدرس |
+| PUT | `/api/Teachers/{id}` | Admin | تعديل مدرس |
+| DELETE | `/api/Teachers/{id}` | Admin | حذف مدرس |
+| GET | `/api/Teachers/TeacherDetails/{id}` | Admin | تفاصيل مدرس مع العلاقات |
+
+### Classes
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/Classes` | Admin, Teacher | قائمة الفصول |
+| GET | `/api/Classes/{id}` | Admin, Teacher | فصل واحد |
+| GET | `/api/Classes/Details/{id}` | Admin, Teacher | تفاصيل الفصل |
+| GET | `/api/Classes/InFormation/{ClassId}` | Admin, Teacher | معلومات الفصل |
+| POST | `/api/Classes` | Admin | إنشاء فصل |
+| PUT | `/api/Classes/{id}` | Admin | تعديل فصل |
+| DELETE | `/api/Classes/{id}` | Admin | حذف فصل |
+
+### Subjects
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/Subjects` | Admin | كل المواد |
+| GET | `/api/Subjects/{id}` | Admin | مادة واحدة |
+| POST | `/api/Subjects` | Admin | إنشاء مادة |
+| PUT | `/api/Subjects/{id}` | Admin | تعديل مادة |
+| DELETE | `/api/Subjects/{id}` | Admin | حذف مادة |
+
+### Classrooms
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/Classroomes` | Admin, Teacher | كل القاعات |
+| GET | `/api/Classroomes/{id}` | Admin, Teacher | قاعة واحدة |
+| POST | `/api/Classroomes` | Admin | إنشاء قاعة |
+| PUT | `/api/Classroomes/{id}` | Admin | تعديل قاعة |
+| DELETE | `/api/Classroomes/{id}` | Admin | حذف قاعة |
+
+### TimeSlots
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/TimeSlots` | Admin | كل الحصص الزمنية |
+| GET | `/api/TimeSlots/{id}` | Admin | حصة زمنية واحدة |
+| POST | `/api/TimeSlots` | Admin | إنشاء حصة زمنية |
+| PUT | `/api/TimeSlots/{id}` | Admin | تعديل حصة زمنية |
+| DELETE | `/api/TimeSlots/{id}` | Admin | حذف، ويرجع 409 لو مستخدمة في timetable |
+
+### Relations
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/ClassSubjects` | Admin | كل روابط الفصل/المادة |
+| GET | `/api/ClassSubjects/Class/{classId}` | Admin | مواد فصل |
+| GET | `/api/ClassSubjects/Subject/{subjectId}` | Admin | فصول مادة |
+| GET | `/api/ClassSubjects/{classId}/{subjectId}` | Admin | رابط واحد |
+| POST | `/api/ClassSubjects` | Admin | ربط فصل بمادة |
+| DELETE | `/api/ClassSubjects/{classId}/{subjectId}` | Admin | حذف الربط |
+| GET | `/api/TeacherClasses` | Admin | كل روابط المدرس/الفصل |
+| GET | `/api/TeacherClasses/{teacherId}/{classId}` | Admin | رابط واحد |
+| GET | `/api/TeacherClasses/Teacher/{teacherId}` | Admin | فصول مدرس |
+| GET | `/api/TeacherClasses/Class/{classId}` | Admin | مدرسي فصل |
+| POST | `/api/TeacherClasses` | Admin | ربط مدرس بفصل |
+| DELETE | `/api/TeacherClasses/{teacherId}/{classId}` | Admin | حذف الربط |
+| GET | `/api/TeacherSubjects` | Admin | كل روابط المدرس/المادة |
+| GET | `/api/TeacherSubjects/Teacher/{teacherId}` | Admin | مواد مدرس |
+| GET | `/api/TeacherSubjects/Subject/{subjectId}` | Admin | مدرسي مادة |
+| GET | `/api/TeacherSubjects/{teacherId}/{subjectId}` | Admin | رابط واحد |
+| POST | `/api/TeacherSubjects` | Admin | ربط مدرس بمادة |
+| DELETE | `/api/TeacherSubjects/{teacherId}/{subjectId}` | Admin | حذف الربط |
+
+### Grades
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/Grades` | Admin, Teacher | Admin يرى الكل، Teacher يرى نطاقه |
+| GET | `/api/Grades/{id}` | Admin, Teacher | درجة واحدة حسب الصلاحية |
+| GET | `/api/Grades/Student/{studentId}` | Admin, Teacher | درجات طالب حسب الصلاحية |
+| POST | `/api/Grades` | Admin, Teacher | إضافة درجة |
+| PUT | `/api/Grades/{id}` | Admin, Teacher | تعديل درجة |
+| DELETE | `/api/Grades/{id}` | Admin, Teacher | حذف درجة |
+| GET | `/api/Grades/MyGrades` | Student | درجات الطالب الحالي |
+
+### Attendances
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/Attendances` | Admin | كل الحضور |
+| GET | `/api/Attendances/{id}` | Admin, Teacher | حضور واحد حسب الصلاحية |
+| POST | `/api/Attendances` | Admin, Teacher | إضافة حضور |
+| PUT | `/api/Attendances/{id}` | Admin, Teacher | تعديل حضور |
+| DELETE | `/api/Attendances/{id}` | Admin | حذف حضور |
+
+### Timetables
+
+| Method | Endpoint | Roles | استخدام |
+|---|---|---|---|
+| GET | `/api/Timetables` | Admin, Teacher | Admin يرى الكل، Teacher يرى نطاقه |
+| GET | `/api/Timetables/{id}` | Admin, Teacher, Student | حسب الصلاحية |
+| GET | `/api/Timetables/Class/{classId}` | Admin, Teacher, Student | Student فقط class بتاعه |
+| GET | `/api/Timetables/MyTimetable` | Teacher, Student | جدول المستخدم الحالي |
+| POST | `/api/Timetables` | Admin | إنشاء جدول |
+| PUT | `/api/Timetables/{id}` | Admin | تعديل جدول |
+| DELETE | `/api/Timetables/{id}` | Admin | حذف جدول |
+
+## 9. قواعد مهمة للفرونت
+
+- بعد register لا تعتبر المستخدم Student أو Teacher إلا بعد Admin assign role.
+- لو endpoint رجع 401: غالبا token ناقص أو منتهي.
+- لو رجع 403: token صحيح لكن role غير مسموح.
+- لو Teacher حاول يعدل grade/attendance خارج فصوله أو مواده، المفروض يرجع منع صلاحية أو not found حسب الحالة.
+- اعتمد على response DTOs، لأنها اتظبطت لتكون أنسب للفرونت بدل entity graph كبير.
+- لا تعرض endpoints الخاصة بـ Admin في UI الطالب أو المدرس.
+- اعمل guards في الفرونت حسب `roles` الراجعة من login.
+
+## 10. تغييرات الرينج المطلوب
+
+تم تلخيص التغييرات من commit:
+
+`d47c5bab833c871f4102dc10d1a98a1ddf48150a`
+
+إلى commit:
+
+`911e026fb9a971d030dd4b7f1bf429a84f6f8119`
+
+الكوميتات داخل الرينج:
+
+| Commit | ملخص |
+|---|---|
+| `3ae95fd` | تحسين response الخاص بالطالب الواحد |
+| `9a03554` | إصلاح Teacher Details |
+| `8400a45` | إضافة response DTO contracts |
+| `e2ead10` | تحسين أمان attendance |
+| `605b3b7` | تحسين teacher response contracts |
+| `3a12397` | إصلاح delete flows للعلاقات |
+| `083dc37` | ضبط authorization للدرجات |
+| `9598815` | تحديث package أمني |
+| `c722391` | إضافة timetable APIs |
+| `6489331` | إدارة users من Admin |
+| `2622cbd` | تنظيف nullable warnings |
+| `204f591` | ضبط secrets/configuration |
+| `5907fae` | توثيق local setup secrets |
+| `3bea7e4` | معالجة أخطاء عامة في المشروع |
+| `6449412` | ضبط الاتصال بـ SQL Server |
+| `911e026` | معالجة assign role |
+
+أهم التغييرات الوظيفية:
+
+- إضافة نظام Auth مبني على JWT وIdentity.
+- إضافة roles: `Admin`, `Teacher`, `Student`.
+- إضافة Admin user management endpoints.
+- إضافة assign/remove role flows.
+- ربط `ApplicationUser` بكيانات Student وTeacher.
+- إضافة DTOs واضحة للـ frontend responses.
+- ضبط AutoMapper mappings للكيانات والعلاقات.
+- تحسين صلاحيات Teacher وStudent بحيث كل واحد يرى أو يعدل نطاقه فقط.
+- إضافة APIs للجداول والحصص الزمنية.
+- إضافة APIs للعلاقات: ClassSubjects, TeacherClasses, TeacherSubjects.
+- تحسين delete flows للعلاقات ومنع مشاكل foreign keys.
+- إضافة tests للتحقق من token service وresponse contracts.
+- إضافة GitHub Actions CI.
+- إضافة solution file وREADME وتحليل تفصيلي للمشروع.
+- تجهيز publish output لـ Monster.
+
+## 11. تغييرات الحالة الحالية بعد الرينج
+
+بعد التجربة العملية على Local وMonster حصلت تحديثات مهمة في الكود الحالي:
+
+- `appsettings.Development.json` يستخدم SQL Server المحلي `SQLEXPRESS`.
+- `appsettings.json` يستخدم Monster SQL Server production connection.
+- تم منع `UseHttpsRedirection` في Development لتجنب Swagger/Postman `Failed to fetch` عند التشغيل المحلي على HTTP.
+- تم إضافة CORS محلي يسمح بـ `localhost` و`127.0.0.1` في Development.
+- تم إضافة `/health/database` لفحص اتصال قاعدة البيانات.
+- تم تنظيف User Secrets المحلي من connection string الإنتاجي حتى المحلي لا يكتب على Monster بالغلط.
+- تم إصلاح مشكلة EF execution strategy مع transactions في assign/remove role/delete user باستخدام `CreateExecutionStrategy()` داخل UnitOfWork.
+- تم تحسين error response في auth/admin بحيث يظهر message واضح بدل 500 مبهم.
+
+## 12. نتيجة Smoke Test
+
+تمت تجربة flow كامل على Monster بنجاح:
+
+- Admin login.
+- Register student وteacher مؤقتين.
+- Assign roles `Student` و`Teacher`.
+- Login للطالب والمدرس.
+- إنشاء subject, classroom, time slot, class.
+- ربط الطالب بفصل.
+- ربط الفصل بالمادة.
+- ربط المدرس بالفصل والمادة.
+- إنشاء attendance وgrade وtimetable.
+- تجربة Student: `MyProfile`, `MyGrades`, `MyTimetable`.
+- تجربة Teacher: `MyProfile`, `MyClasses`, `MySubjects`.
+- تنظيف البيانات المؤقتة بعد الاختبار.
+
+النتيجة: الـ flow الأساسي شغال على Monster بعد إصلاح assign role والـ database connection.
+
+## 13. ملاحظات أمان ونشر
+
+- لا تحفظ connection string أو JWT key في repo عام.
+- الأفضل في الإنتاج استخدام environment variables من Monster بدل كتابة secrets داخل `appsettings.json`.
+- بعد أي migration جديدة، نفذ database update على قاعدة Monster قبل publish لو فيه schema changes.
+- بعد أي publish، اختبر:
+  - `GET /`
+  - `GET /health/database`
+  - `POST /api/Auth/Login`
+  - endpoint واحد من كل role.
