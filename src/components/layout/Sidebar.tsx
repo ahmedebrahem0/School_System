@@ -117,6 +117,7 @@ const NAV_CONFIG: Record<string, NavSection[]> = {
 // ─────────────────────────────────────────────────────
 // SIDEBAR COMPONENT
 // ─────────────────────────────────────────────────────
+// Keeps dashboard navigation role-aware while preserving the fixed desktop layout.
 const Sidebar = () => {
   const { user } = useAuth();
   const { logout } = useLogout();
