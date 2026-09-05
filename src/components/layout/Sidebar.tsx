@@ -124,6 +124,7 @@ const Sidebar = () => {
 
   if (!user) return null;
 
+  // Falls back to an empty navigation list when a role has no configured links yet.
   const navSections = NAV_CONFIG[user.role] ?? [];
   const roleMeta = ROLE_META[user.role];
   const initials = getInitials(user.fullName);
