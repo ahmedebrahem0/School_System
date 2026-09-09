@@ -18,13 +18,16 @@ import { AlertTriangle } from "lucide-react";
 // CONFIRM DIALOG PROPS
 // ─────────────────────────────────────────────────────
 interface ConfirmDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
+  isOpen?: boolean;
+  open?: boolean;
+  onClose?: () => void;
+  onOpenChange?: (open: boolean) => void;
   onConfirm: () => void;
   isLoading?: boolean;
   title?: string;
   description?: string;
   confirmLabel?: string;
+  variant?: "danger" | "default";
 }
 
 // ─────────────────────────────────────────────────────
@@ -32,15 +35,25 @@ interface ConfirmDialogProps {
 // ─────────────────────────────────────────────────────
 const ConfirmDialog = ({
   isOpen,
+  open,
   onClose,
+  onOpenChange,
   onConfirm,
   isLoading = false,
   title = "Are you sure?",
   description = "This action cannot be undone.",
   confirmLabel = "Delete",
 }: ConfirmDialogProps) => {
+  const dialogOpen = open ?? isOpen ?? false;
+  const handleOpenChange = (nextOpen: boolean) => {
+    onOpenChange?.(nextOpen);
+    if (!nextOpen) {
+      onClose?.();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-md rounded-xl">
 
         <DialogHeader>

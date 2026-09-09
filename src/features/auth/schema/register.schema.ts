@@ -19,7 +19,7 @@ export const registerSchema = z
       .min(3, "Full name must be at least 3 characters"),
 
     gender: z.enum(["Male", "Female"], {
-      errorMap: () => ({ message: "Please select a gender" }),
+      error: "Please select a gender",
     }),
 //     gender: z.enum(["Male", "Female"], {
 //   required_error: "Please select a gender",

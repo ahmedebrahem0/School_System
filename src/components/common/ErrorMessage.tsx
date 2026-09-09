@@ -14,6 +14,10 @@ interface ErrorMessageProps {
   title?: string;
   description?: string;
   onRetry?: () => void;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
   className?: string;
 }
 
@@ -24,6 +28,7 @@ const ErrorMessage = ({
   title = "Something went wrong",
   description = "An error occurred while loading data. Please try again.",
   onRetry,
+  action,
   className,
 }: ErrorMessageProps) => {
   return (
@@ -58,6 +63,12 @@ const ErrorMessage = ({
         >
           <RefreshCw className="w-4 h-4" />
           Try again
+        </Button>
+      )}
+
+      {action && (
+        <Button onClick={action.onClick} variant="outline" className="mt-6">
+          {action.label}
         </Button>
       )}
 

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-size: 13px;
+    color: var(--content-color-primary, #212121);
+    padding: 16px;
+    direction: rtl;
+  }
+  h2 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--content-color-primary, #212121);
+    border-bottom: 2px solid var(--border-color-default, #e0e0e0);
+    padding-bottom: 8px;
+  }
+  .flow-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .phase {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color-default, #e0e0e0);
+  }
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #fff;
+  }
+  .phase-num {
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .phase-body {
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: var(--background-color-secondary, #f8f8f8);
+  }
+  .endpoint-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 5px;
+    background: var(--background-color-primary, #fff);
+    border: 1px solid var(--border-color-default, #ebebeb);
+  }
+  .method {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    min-width: 42px;
+    text-align: center;
+    margin-top: 1px;
+  }
+  .GET  { background: #e3f2fd; color: #1565c0; }
+  .POST { background: #e8f5e9; color: #2e7d32; }
+  .PUT  { background: #fff8e1; color: #f57f17; }
+  .DELETE { background: #fce4ec; color: #c62828; }
+  .ep-info { flex: 1; }
+  .ep-path { font-size: 11px; font-weight: 600; color: var(--content-color-primary, #333); direction: ltr; text-align: left; }
+  .ep-desc { font-size: 11px; color: var(--content-color-secondary, #666); margin-top: 1px; }
+  .dep-tag {
+    font-size: 10px;
+    background: #f3e5f5;
+    color: #6a1b9a;
+    border-radius: 3px;
+    padding: 1px 5px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .arrow {
+    text-align: center;
+    font-size: 16px;
+    color: var(--content-color-tertiary, #aaa);
+    line-height: 1;
+    margin: 1px 0;
+  }
+  .note {
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    margin-top: 4px;
+    border-right: 3px solid;
+  }
+  .note-info { background: #e3f2fd; border-color: #1976d2; color: #0d47a1; }
+  .note-warn { background: #fff8e1; border-color: #f9a825; color: #e65100; }
+
+  /* Phase colors */
+  .p1 .phase-header { background: #1565c0; }
+  .p2 .phase-header { background: #2e7d32; }
+  .p3 .phase-header { background: #6a1b9a; }
+  .p4 .phase-header { background: #e65100; }
+  .p5 .phase-header { background: #00695c; }
+  .p6 .phase-header { background: #4527a0; }
+  .p7 .phase-header { background: #ad1457; }
+  .p8 .phase-header { background: #37474f; }
+</style>
+</head>
+<body>
+
+<h2>🔄 School System API — ترتيب الاعتماديات (Flow)</h2>
+
+<div class="flow-container">
+
+  <!-- PHASE 1 -->
+  <div class="phase p1">
+    <div class="phase-header">
+      <div class="phase-num">1</div>
+      المرحلة الأولى — Authentication (لازم تبدأ بيها)
+    </div>
+    <div class="phase-body">
+      <div class="note note-info">⚠️ كل الـ endpoints التانية محتاجة Token — لازم تعمل Login الأول وتحفظ الـ token</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Auth/Register</div>
+          <div class="ep-desc">تسجيل يوزر جديد (Student / Teacher)</div>
+        </div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Auth/Login</div>
+          <div class="ep-desc">تسجيل دخول → بيرجع token احفظه في متغير</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- PHASE 2 -->
+  <div class="phase p2">
+    <div class="phase-header">
+      <div class="phase-num">2</div>
+      المرحلة التانية — Admin: تعيين الأدوار
+    </div>
+    <div class="phase-body">
+      <div class="note note-warn">يحتاج: Token من Admin account — بعد Register لازم Admin يعين الدور</div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Admin/users-without-role</div>
+          <div class="ep-desc">جيب اليوزرز اللي معندهمش role عشان تعرف مين تعين ليه</div>
+        </div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Admin/assign-role</div>
+          <div class="ep-desc">عين role للـ user (Student / Teacher)</div>
+        </div>
+        <span class="dep-tag">يحتاج userId</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- PHASE 3 -->
+  <div class="phase p3">
+    <div class="phase-header">
+      <div class="phase-num">3</div>
+      المرحلة التالتة — إنشاء المواد (Subjects)
+    </div>
+    <div class="phase-body">
+      <div class="note note-warn">يحتاج: Token — Classes بتحتاج Subjects موجودة قبلها</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Subjects</div>
+          <div class="ep-desc">أنشئ مادة دراسية جديدة → بيرجع subjectId</div>
+        </div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Subjects</div>
+          <div class="ep-desc">جيب كل المواد وخد الـ IDs</div>
+        </div>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Subjects/:id</div>
+          <div class="ep-desc">تفاصيل مادة معينة</div>
+        </div>
+        <span class="dep-tag">يحتاج subjectId</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- PHASE 4 -->
+  <div class="phase p4">
+    <div class="phase-header">
+      <div class="phase-num">4</div>
+      المرحلة الرابعة — إنشاء الفصول (Classes) والغرف (Classrooms)
+    </div>
+    <div class="phase-body">
+      <div class="note note-warn">يحتاج: Subjects موجودة — Students وTeacherClasses بتحتاج Classes</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Classroomes</div>
+          <div class="ep-desc">أنشئ غرفة/فصل فيزيائي → بيرجع classroomId</div>
+        </div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Classes</div>
+          <div class="ep-desc">أنشئ Class (الفصل الدراسي) → بيرجع classId</div>
+        </div>
+        <span class="dep-tag">يحتاج classroomId</span>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Classes</div>
+          <div class="ep-desc">جيب كل الـ Classes وخد الـ IDs</div>
+        </div>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Classes/InFormation/:ClassId</div>
+          <div class="ep-desc">تفاصيل كاملة عن الـ Class (Teachers + Students)</div>
+        </div>
+        <span class="dep-tag">يحتاج classId</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- PHASE 5 -->
+  <div class="phase p5">
+    <div class="phase-header">
+      <div class="phase-num">5</div>
+      المرحلة الخامسة — إضافة المدرسين (Teachers)
+    </div>
+    <div class="phase-body">
+      <div class="note note-warn">يحتاج: Token + userId من Register + Classes موجودة</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Teachers</div>
+          <div class="ep-desc">أنشئ Teacher profile → بيرجع teacherId</div>
+        </div>
+        <span class="dep-tag">يحتاج userId</span>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/TeacherClasses</div>
+          <div class="ep-desc">اربط المدرس بالـ Class</div>
+        </div>
+        <span class="dep-tag">يحتاج teacherId + classId</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/TeacherClasses/Teacher/:teacherId</div>
+          <div class="ep-desc">جيب كل الـ Classes بتاعت مدرس معين</div>
+        </div>
+        <span class="dep-tag">يحتاج teacherId</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Teachers/TeacherDetails/:id</div>
+          <div class="ep-desc">تفاصيل كاملة عن المدرس</div>
+        </div>
+        <span class="dep-tag">يحتاج teacherId</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- PHASE 6 -->
+  <div class="phase p6">
+    <div class="phase-header">
+      <div class="phase-num">6</div>
+      المرحلة السادسة — إضافة الطلاب (Students)
+    </div>
+    <div class="phase-body">
+      <div class="note note-warn">يحتاج: Token + userId + Classes موجودة</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Students</div>
+          <div class="ep-desc">أنشئ Student profile → بيرجع studentId</div>
+        </div>
+        <span class="dep-tag">يحتاج userId + classId</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Students/MyProfile</div>
+          <div class="ep-desc">بروفايل الطالب الحالي (من الـ token)</div>
+        </div>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Students/attendance</div>
+          <div class="ep-desc">حضور طالب معين بالاسم</div>
+        </div>
+        <span class="dep-tag">يحتاج studentName</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- PHASE 7 -->
+  <div class="phase p7">
+    <div class="phase-header">
+      <div class="phase-num">7</div>
+      المرحلة السابعة — الدرجات (Grades)
+    </div>
+    <div class="phase-body">
+      <div class="note note-warn">يحتاج: Students + Classes + Subjects كلها موجودة</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Grades</div>
+          <div class="ep-desc">أضف درجة لطالب في مادة</div>
+        </div>
+        <span class="dep-tag">يحتاج studentId + subjectId</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Grades/Student/:name</div>
+          <div class="ep-desc">جيب درجات طالب باسمه</div>
+        </div>
+        <span class="dep-tag">يحتاج studentName</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Grades/MyGrades</div>
+          <div class="ep-desc">درجات الطالب الحالي (من الـ token)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- PHASE 8 -->
+  <div class="phase p8">
+    <div class="phase-header">
+      <div class="phase-num">8</div>
+      المرحلة الثامنة — الحضور (Attendances)
+    </div>
+    <div class="phase-body">
+      <div class="note note-warn">يحتاج: Students + Classes موجودة</div>
+      <div class="endpoint-row">
+        <span class="method POST">POST</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Attendances</div>
+          <div class="ep-desc">سجل حضور طالب</div>
+        </div>
+        <span class="dep-tag">يحتاج studentId + classId</span>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Attendances</div>
+          <div class="ep-desc">جيب كل سجلات الحضور</div>
+        </div>
+      </div>
+      <div class="endpoint-row">
+        <span class="method GET">GET</span>
+        <div class="ep-info">
+          <div class="ep-path">/api/Attendances/:id</div>
+          <div class="ep-desc">تفاصيل سجل حضور معين</div>
+        </div>
+        <span class="dep-tag">يحتاج attendanceId</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

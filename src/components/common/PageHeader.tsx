@@ -12,6 +12,8 @@ import { cn } from "@/lib/utils/cn";
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
+  description?: string;
+  breadcrumb?: string[];
   count?: number;
   actions?: React.ReactNode;
   className?: string;
@@ -23,10 +25,14 @@ interface PageHeaderProps {
 const PageHeader = ({
   title,
   subtitle,
+  description,
+  breadcrumb,
   count,
   actions,
   className,
 }: PageHeaderProps) => {
+  const supportingText = subtitle ?? description;
+
   return (
     <div
       className={cn(
@@ -37,6 +43,11 @@ const PageHeader = ({
     >
       {/* Left — Title + Subtitle + Count */}
       <div className="space-y-1">
+        {breadcrumb && breadcrumb.length > 0 && (
+          <p className="text-[12px] text-zinc-400">
+            {breadcrumb.join(" / ")}
+          </p>
+        )}
 
         {/* Title + Count Badge */}
         <div className="flex items-center gap-3">
@@ -58,9 +69,9 @@ const PageHeader = ({
         </div>
 
         {/* Subtitle */}
-        {subtitle && (
+        {supportingText && (
           <p className="text-[14px] text-zinc-500">
-            {subtitle}
+            {supportingText}
           </p>
         )}
 

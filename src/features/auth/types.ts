@@ -21,9 +21,9 @@ export interface LoginDto {
 export type LoginFormData = LoginDto;
 
 // Response from our Next.js Route Handler after login
-// Note: token is stored in HttpOnly Cookie — not returned here
 export interface LoginHandlerResponse {
   user: AuthUser;
+  token: string;
 }
 
 // ─────────────────────────────────────────────────────

@@ -106,10 +106,10 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         {/* Bottom — Quote */}
         <div className="relative z-10">
           <p className="text-white/40 text-sm">
-            © 2025 EduSystem. All rights reserved.
+            © 2026 EduSystem. All rights reserved.
           </p>
         </div>
-
+{/*  */}
       </div>
 
       {/* ─────────────────────────────────────────────

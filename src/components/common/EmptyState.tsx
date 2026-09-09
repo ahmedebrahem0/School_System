@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 // ─────────────────────────────────────────────────────
 interface EmptyStateProps {
   // Custom icon — defaults to Inbox
-  icon?: LucideIcon;
+  icon?: LucideIcon | React.ReactNode;
 
   title: string;
   description?: string;
@@ -20,6 +20,10 @@ interface EmptyStateProps {
   // Optional action button
   actionLabel?: string;
   onAction?: () => void;
+  action?: {
+    label: string;
+    onClick: () => void;
+  };
 
   className?: string;
 }
@@ -33,8 +37,12 @@ const EmptyState = ({
   description,
   actionLabel,
   onAction,
+  action,
   className,
 }: EmptyStateProps) => {
+  const actionConfig =
+    action ?? (actionLabel && onAction ? { label: actionLabel, onClick: onAction } : null);
+
   return (
     <div
       className={cn(
@@ -49,7 +57,11 @@ const EmptyState = ({
         "bg-zinc-100 flex items-center justify-center",
         "mb-4"
       )}>
-        <Icon className="w-8 h-8 text-zinc-400" />
+        {typeof Icon === "function" ? (
+          <Icon className="w-8 h-8 text-zinc-400" />
+        ) : (
+          Icon
+        )}
       </div>
 
       {/* Title */}
@@ -65,13 +77,13 @@ const EmptyState = ({
       )}
 
       {/* Action Button */}
-      {actionLabel && onAction && (
+      {actionConfig && (
         <Button
-          onClick={onAction}
+          onClick={actionConfig.onClick}
           variant="outline"
           className="mt-6 border-zinc-300 text-zinc-700 hover:bg-zinc-50"
         >
-          {actionLabel}
+          {actionConfig.label}
         </Button>
       )}
 
