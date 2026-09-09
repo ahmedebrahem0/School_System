@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import PageHeader from "@/components/common/PageHeader"
@@ -25,12 +25,14 @@ import type { StudentDetails } from "@/features/students/types"
 export default function StudentDetailPage() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const studentId = Number(id)
 
-  const [editOpen, setEditOpen] = useState(false)
+  const [manualEditOpen, setManualEditOpen] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<StudentDetails | null>(null)
+  const editOpen = searchParams.has("edit") || manualEditOpen
 
-  const { student, isLoading, isError } = useStudent(studentId)
+  const { student, isLoading, isError, refetch } = useStudent(studentId)
   const { handleDelete, isDeleting } = useStudentActions()
 
   // ── Delete handler ────────────────────────────────────────────────────────
@@ -91,7 +93,10 @@ export default function StudentDetailPage() {
                 <ArrowLeft size={15} />
                 Back
               </Button>
-              <Button size="sm" onClick={() => setEditOpen(true)}>
+              <Button
+                size="sm"
+                onClick={() => router.push(ROUTES.STUDENTS.EDIT(student.studentId))}
+              >
                 <Pencil size={15} />
                 Edit Student
               </Button>
@@ -106,7 +111,15 @@ export default function StudentDetailPage() {
       </div>
 
       {/* ── Edit Sheet ──────────────────────────────────────────────────── */}
-      <Sheet open={editOpen} onOpenChange={setEditOpen}>
+      <Sheet
+        open={editOpen}
+        onOpenChange={(open) => {
+          setManualEditOpen(open)
+          if (!open && searchParams.has("edit")) {
+            router.replace(ROUTES.STUDENTS.DETAIL(student.studentId))
+          }
+        }}
+      >
         <SheetContent side="right" className="w-[440px] overflow-y-auto">
           <SheetHeader className="mb-2">
             <SheetTitle>Edit Student</SheetTitle>
@@ -117,7 +130,12 @@ export default function StudentDetailPage() {
           <div className="px-6 pb-6">
             <StudentForm
               student={student as StudentDetails}
-              onSuccess={() => setEditOpen(false)}
+              redirectToList={false}
+              onSuccess={() => {
+                setManualEditOpen(false)
+                router.replace(ROUTES.STUDENTS.DETAIL(student.studentId))
+                refetch()
+              }}
             />
           </div>
         </SheetContent>
