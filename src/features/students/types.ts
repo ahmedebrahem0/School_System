@@ -6,7 +6,8 @@
 export interface StudentClass {
   classId: number;
   className: string;
-  schoolGradeID: number | null;
+  schoolGradeId: number | null;
+  schoolGradeName?: string | null;
   schoolGrade: null;
   students: null[];
   timetables: unknown[];
@@ -49,24 +50,41 @@ export interface Student {
   name: string;
   dateOfBirth: string | null;
   classId: number | null;
-  applicationUserId: string;
-  schoolGradeID: number | null;
-  schoolGrade: null;
-  class: null;
-  applicationUser: null;
-  attendances: unknown[];
-  grades: unknown[];
+  className: string | null;
+  schoolGradeId: number | null;
+  schoolGradeName: string | null;
+  applicationUserId: string | null;
+  schoolGrade?: null;
+  class?: StudentClass | null;
+  applicationUser?: null;
+  attendances?: StudentAttendance[];
+  grades?: StudentGrade[];
 }
-// `
+
+export interface StudentAttendanceRecord {
+  attendanceId?: number;
+  studentId?: number;
+  date?: string | null;
+  status?: "Present" | "Absent" | "Late" | string | null;
+  subjectName?: string | null;
+  className?: string | null;
+  notes?: string | null;
+}
+
+export interface StudentAttendanceResponse {
+  name: string | null;
+  attendDtoForStudentInfo: StudentAttendanceRecord[];
+}
+
 // ─────────────────────────────────────────────────────
 // STUDENT DETAILS
 // Shape from GET /api/Students/{id} (single)
 // Has full nested data
 // ─────────────────────────────────────────────────────
 export interface StudentDetails extends Omit<Student, "class" | "attendances" | "grades"> {
-  class: StudentClass | null;
-  attendances: StudentAttendance[];
-  grades: StudentGrade[];
+  class?: StudentClass | null;
+  attendances?: StudentAttendance[];
+  grades?: StudentGrade[];
 }
 
 // ─────────────────────────────────────────────────────
