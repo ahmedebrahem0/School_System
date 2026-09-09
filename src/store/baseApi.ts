@@ -6,7 +6,7 @@ import type {
 } from "@reduxjs/toolkit/query";
 import { transformResponse } from "@/lib/utils/transformResponse";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
+const BASE_URL = "/api/backend";
 const TOKEN_STORAGE_KEY = "token";
 
 const baseQuery = fetchBaseQuery({
