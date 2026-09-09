@@ -10,6 +10,7 @@ import { CACHE_TIMES } from "@/constants/cache-times";
 import type {
   Student,
   StudentDetails,
+  StudentAttendanceResponse,
   CreateStudentDto,
   UpdateStudentDto,
 } from "./types";
@@ -68,12 +69,25 @@ export const studentsApi = baseApi.injectEndpoints({
       providesTags: [{ type: "Student" as const, id: "MY_PROFILE" }],
     }),
 
+    getStudentAttendance: builder.query<
+      StudentAttendanceResponse,
+      { studentName?: string } | void
+    >({
+      query: (args) => ({
+        url: API_ENDPOINTS.STUDENTS.ATTENDANCE,
+        method: "GET",
+        params: args?.studentName ? { studentName: args.studentName } : undefined,
+      }),
+      keepUnusedDataFor: CACHE_TIMES.NORMAL,
+      providesTags: [{ type: "Student" as const, id: "ATTENDANCE" }],
+    }),
+
     // ─────────────────────────────────────────────
     // CREATE STUDENT
     // Uses multipart/form-data as per OpenAPI spec
     // Invalidates student list cache after creation
     // ─────────────────────────────────────────────
-    createStudent: builder.mutation<void, CreateStudentDto>({
+    createStudent: builder.mutation<Student, CreateStudentDto>({
       query: (data) => {
         // Build FormData — backend expects multipart/form-data
         const formData = new FormData();
@@ -102,7 +116,7 @@ export const studentsApi = baseApi.injectEndpoints({
     // Uses JSON body as per OpenAPI spec
     // Invalidates both list and specific student cache
     // ─────────────────────────────────────────────
-    updateStudent: builder.mutation<void, { id: number; data: UpdateStudentDto }>
+    updateStudent: builder.mutation<Student, { id: number; data: UpdateStudentDto }>
       ({
       query: ({ id, data }) => ({
         url: API_ENDPOINTS.STUDENTS.BY_ID(id),
@@ -117,13 +131,9 @@ export const studentsApi = baseApi.injectEndpoints({
     }),
 
     // ─────────────────────────────────────────────
-    // DELETE STUDENT
-    // Query param: ?id={id} as per OpenAPI spec
-    // Invalidates student list cache after deletion
-    // ─────────────────────────────────────────────
     deleteStudent: builder.mutation<void, number>({
       query: (id) => ({
-        url: `${API_ENDPOINTS.STUDENTS.GET_ALL}?id=${id}`,
+        url: API_ENDPOINTS.STUDENTS.BY_ID(id),
         method: "DELETE",
       }),
       // Invalidate specific student + list
@@ -142,6 +152,7 @@ export const {
   useGetStudentsQuery,
   useGetStudentQuery,
   useGetMyProfileQuery,
+  useGetStudentAttendanceQuery,
   useCreateStudentMutation,
   useUpdateStudentMutation,
   useDeleteStudentMutation,
