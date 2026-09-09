@@ -67,6 +67,12 @@ export const ROUTES = {
     DETAIL: (id: number) => `/subjects/${id}`,
   },
 
+  CLASSROOMS: {
+    LIST: "/classrooms",
+    CREATE: "/classrooms/create",
+    DETAILS: (id: number) => `/classrooms/${id}`,
+  },
+
   GRADES: {
     LIST: "/grades",
     DETAILS: (id: number) => `/grades/${id}`,

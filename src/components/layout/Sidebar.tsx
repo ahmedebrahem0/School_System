@@ -57,6 +57,7 @@ const NAV_CONFIG: Record<string, NavSection[]> = {
         { label: "Teachers",  href: ROUTES.TEACHERS.LIST,  icon: Users },
         { label: "Classes",   href: ROUTES.CLASSES.LIST,   icon: School },
         { label: "Subjects",  href: ROUTES.SUBJECTS.LIST,  icon: BookOpen },
+        { label: "Classrooms",  href: ROUTES.CLASSROOMS.LIST,  icon: School },
       ],
     },
     {
