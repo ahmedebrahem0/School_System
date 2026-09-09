@@ -32,9 +32,14 @@ interface StudentFormProps {
   /** If provided → edit mode. If not → create mode */
   student?: StudentDetails
   onSuccess?: () => void
+  redirectToList?: boolean
 }
 
-export function StudentForm({ student, onSuccess }: StudentFormProps) {
+export function StudentForm({
+  student,
+  onSuccess,
+  redirectToList = true,
+}: StudentFormProps) {
   const router = useRouter()
   const isEdit = !!student
 
@@ -77,9 +82,9 @@ export function StudentForm({ student, onSuccess }: StudentFormProps) {
           classId: values.classId,
         },
         {
+          redirectToDetail: redirectToList,
           onSuccess: () => {
             onSuccess?.()
-            router.push(ROUTES.STUDENTS.LIST)
           },
         }
       )
@@ -91,9 +96,9 @@ export function StudentForm({ student, onSuccess }: StudentFormProps) {
           ClassId: values.classId,
         },
         {
+          redirectToList,
           onSuccess: () => {
             onSuccess?.()
-            router.push(ROUTES.STUDENTS.LIST)
           },
         }
       )
