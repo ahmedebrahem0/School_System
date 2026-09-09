@@ -5,7 +5,7 @@
 import { useRouter } from "next/navigation";
 import { Edit, Trash2, Eye } from "lucide-react";
 import { useState } from "react";
-import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import ConfirmDialog from "@/components/common/ConfirmDialog";
 import { ROUTES } from "@/constants/routes";
 import { useClassActions } from "../hooks/useClassActions";
 import type { Class } from "../types";

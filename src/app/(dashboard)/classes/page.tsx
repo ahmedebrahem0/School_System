@@ -5,11 +5,11 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/common/PageHeader";
-import { Loader } from "@/components/common/Loader";
-import { ErrorMessage } from "@/components/common/ErrorMessage";
-import { EmptyState } from "@/components/common/EmptyState";
-import { Pagination } from "@/components/common/Pagination";
+import PageHeader from "@/components/common/PageHeader";
+import Loader from "@/components/common/Loader";
+import ErrorMessage from "@/components/common/ErrorMessage";
+import EmptyState from "@/components/common/EmptyState";
+import Pagination from "@/components/common/Pagination";
 import { ClassGrid } from "@/features/classes/components/ClassGrid";
 import { ClassGridSkeleton } from "@/features/classes/components/ClassGrid.skeleton";
 import { useClasses } from "@/features/classes/hooks/useClasses";

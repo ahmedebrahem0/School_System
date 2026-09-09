@@ -31,8 +31,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ConfirmDialog } from "@/components/common/ConfirmDialog"
-import { EmptyState } from "@/components/common/EmptyState"
+import ConfirmDialog from "@/components/common/ConfirmDialog"
+import EmptyState from "@/components/common/EmptyState"
 import { useStudents } from "../hooks/useStudents"
 import { useStudentActions } from "../hooks/useStudentActions"
 import { formatDateShort } from "@/lib/utils/formatters"
@@ -363,3 +363,4 @@ export function StudentTable() {
     </>
   )
 }
+

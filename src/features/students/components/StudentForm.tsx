@@ -31,9 +31,10 @@ import type { StudentDetails } from "../types"
 interface StudentFormProps {
   /** If provided → edit mode. If not → create mode */
   student?: StudentDetails
+  onSuccess?: () => void
 }
 
-export function StudentForm({ student }: StudentFormProps) {
+export function StudentForm({ student, onSuccess }: StudentFormProps) {
   const router = useRouter()
   const isEdit = !!student
 
@@ -75,7 +76,12 @@ export function StudentForm({ student }: StudentFormProps) {
           dateOfBirth: values.dateOfBirth || undefined,
           classId: values.classId,
         },
-        { onSuccess: () => router.push(ROUTES.STUDENTS.LIST) }
+        {
+          onSuccess: () => {
+            onSuccess?.()
+            router.push(ROUTES.STUDENTS.LIST)
+          },
+        }
       )
     } else {
       await handleCreate(
@@ -84,7 +90,12 @@ export function StudentForm({ student }: StudentFormProps) {
           DateOfBirth: values.dateOfBirth || undefined,
           ClassId: values.classId,
         },
-        { onSuccess: () => router.push(ROUTES.STUDENTS.LIST) }
+        {
+          onSuccess: () => {
+            onSuccess?.()
+            router.push(ROUTES.STUDENTS.LIST)
+          },
+        }
       )
     }
   }

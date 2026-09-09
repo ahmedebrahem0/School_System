@@ -46,14 +46,28 @@ interface DeleteOptions {
 interface UseStudentActionsReturn {
   // Create
   create: (data: StudentFormData, options?: CreateOptions) => Promise<void>;
+  handleCreate: (
+    data: StudentFormData | CreateStudentDto,
+    options?: CreateOptions
+  ) => Promise<void>;
   isCreating: boolean;
 
   // Update
   update: (id: number, data: StudentFormData, options?: UpdateOptions) => Promise<void>;
+  handleUpdate: (
+    id: number,
+    data: StudentFormData | UpdateStudentDto,
+    options?: UpdateOptions
+  ) => Promise<void>;
   isUpdating: boolean;
 
   // Delete
   delete: (id: number, options?: DeleteOptions) => Promise<void>;
+  handleDelete: (
+    id: number,
+    name?: string,
+    options?: DeleteOptions
+  ) => Promise<void>;
   isDeleting: boolean;
 
   // Overall
@@ -90,7 +104,7 @@ export const useStudentActions = (): UseStudentActionsReturn => {
   //   4. On error: show error toast
   // ─────────────────────────────────────────────────
   const create = useCallback(
-    async (data: StudentFormData, options: CreateOptions = {}) => {
+    async (data: StudentFormData | CreateStudentDto, options: CreateOptions = {}) => {
       try {
         const { onSuccess, redirectToList = true } = options;
 
@@ -98,11 +112,14 @@ export const useStudentActions = (): UseStudentActionsReturn => {
         // Convert StudentFormData to CreateStudentDto
         // POST uses capitalized field names: Name, DateOfBirth, ClassId
         // ─────────────────────────────────────────
-        const createDto: CreateStudentDto = {
-          Name: data.name,
-          DateOfBirth: data.dateOfBirth,
-          ClassId: data.classId,
-        };
+        const createDto: CreateStudentDto =
+          "Name" in data
+            ? data
+            : {
+                Name: data.name,
+                DateOfBirth: data.dateOfBirth,
+                ClassId: data.classId,
+              };
 
         // Call mutation
         await createStudentMutation(createDto).unwrap();
@@ -145,11 +162,7 @@ export const useStudentActions = (): UseStudentActionsReturn => {
   //   4. On error: show error toast
   // ─────────────────────────────────────────────────
   const update = useCallback(
-    async (
-      id: number,
-      data: StudentFormData,
-      options: UpdateOptions = {}
-    ) => {
+    async (id: number, data: StudentFormData | UpdateStudentDto, options: UpdateOptions = {}) => {
       try {
         const { onSuccess, redirectToDetail = true } = options;
 
@@ -240,14 +253,17 @@ export const useStudentActions = (): UseStudentActionsReturn => {
   return {
     // Create
     create,
+    handleCreate: create,
     isCreating,
 
     // Update
     update,
+    handleUpdate: update,
     isUpdating,
 
     // Delete
     delete: delete_,
+    handleDelete: (id, _name, options) => delete_(id, options),
     isDeleting,
 
     // Overall loading state (true if any operation is loading)

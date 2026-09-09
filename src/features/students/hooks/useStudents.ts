@@ -16,6 +16,7 @@ import type { PaginatedResult } from "@/types/api.types";
 interface UseStudentsOptions {
   // Items per page — default 10
   limit?: number;
+  pageSize?: number;
 }
 
 // ─────────────────────────────────────────────────────
@@ -25,6 +26,10 @@ interface UseStudentsOptions {
 interface UseStudentsReturn {
   // Paginated data (filtered + paginated)
   result: PaginatedResult<Student>;
+  students: Student[];
+  allStudents: Student[];
+  total: number;
+  totalPages: number;
 
   // Loading states
   isLoading: boolean;  // First load (show skeleton)
@@ -33,7 +38,13 @@ interface UseStudentsReturn {
 
   // Search
   searchQuery: string;
+  search: string;
   setSearchQuery: (query: string) => void;
+  handleSearch: (query: string) => void;
+  classFilter: number | null;
+  handleClassFilter: (classId: number | null) => void;
+  hasActiveFilters: boolean;
+  clearFilters: () => void;
 
   // Pagination
   page: number;
@@ -49,13 +60,14 @@ interface UseStudentsReturn {
 export const useStudents = (
   options: UseStudentsOptions = {}
 ): UseStudentsReturn => {
-  const { limit = 10 } = options;
+  const limit = options.pageSize ?? options.limit ?? 10;
 
   // ─────────────────────────────────────────────────
   // STATE MANAGEMENT
   // ─────────────────────────────────────────────────
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQueryState] = useState("");
+  const [classFilter, setClassFilter] = useState<number | null>(null);
 
   // ─────────────────────────────────────────────────
   // FETCH ALL STUDENTS
@@ -77,13 +89,16 @@ export const useStudents = (
     const students = data ?? [];
 
     // If search is empty, return all students
-    if (!searchQuery.trim()) return students;
+    return students.filter((student) => {
+      const matchesSearch = searchQuery.trim()
+        ? student.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      const matchesClass =
+        classFilter === null ? true : student.classId === classFilter;
 
-    // Filter by name (case-insensitive)
-    return students.filter((student) =>
-      student.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [data, searchQuery]);
+      return matchesSearch && matchesClass;
+    });
+  }, [data, searchQuery, classFilter]);
 
   // ─────────────────────────────────────────────────
   // HANDLE SEARCH CHANGE
@@ -95,6 +110,17 @@ export const useStudents = (
   const handleSearchChange = (query: string) => {
     setSearchQueryState(query);
     setPage(1); // Reset to first page
+  };
+
+  const handleClassFilter = (classId: number | null) => {
+    setClassFilter(classId);
+    setPage(1);
+  };
+
+  const clearFilters = () => {
+    setSearchQueryState("");
+    setClassFilter(null);
+    setPage(1);
   };
 
   // ─────────────────────────────────────────────────
@@ -113,6 +139,10 @@ export const useStudents = (
   return {
     // Paginated data
     result,
+    students: result.data,
+    allStudents: data ?? [],
+    total: result.total,
+    totalPages: result.totalPages,
 
     // Loading states
     isLoading,  // Show skeleton on first load
@@ -121,7 +151,13 @@ export const useStudents = (
 
     // Search
     searchQuery,
+    search: searchQuery,
     setSearchQuery: handleSearchChange,
+    handleSearch: handleSearchChange,
+    classFilter,
+    handleClassFilter,
+    hasActiveFilters: Boolean(searchQuery.trim()) || classFilter !== null,
+    clearFilters,
 
     // Pagination
     page,

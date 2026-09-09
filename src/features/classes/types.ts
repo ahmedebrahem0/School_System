@@ -49,3 +49,5 @@ export interface UpdateClassDto {
 export interface ClassFormData {
   className: string;
 }
+
+export type Class = Classes;

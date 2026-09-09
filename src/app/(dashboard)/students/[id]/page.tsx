@@ -4,11 +4,11 @@ import { useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { PageHeader } from "@/components/common/PageHeader"
+import PageHeader from "@/components/common/PageHeader"
 import { StudentCard } from "@/features/students/components/StudentCard"
 import { StudentForm } from "@/features/students/components/StudentForm"
 import { StudentCardSkeleton } from "@/features/students/components/StudentCard.skeleton"
-import { ConfirmDialog } from "@/components/common/ConfirmDialog"
+import ConfirmDialog from "@/components/common/ConfirmDialog"
 import {
   Sheet,
   SheetContent,
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sheet"
 import { useStudent } from "@/features/students/hooks/useStudent"
 import { useStudentActions } from "@/features/students/hooks/useStudentActions"
-import { ErrorMessage } from "@/components/common/ErrorMessage"
+import ErrorMessage from "@/components/common/ErrorMessage"
 import { ROUTES } from "@/constants/routes"
 import type { StudentDetails } from "@/features/students/types"
 
@@ -137,3 +137,4 @@ export default function StudentDetailPage() {
     </>
   )
 }
+

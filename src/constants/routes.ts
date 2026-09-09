@@ -41,7 +41,8 @@ export const ROUTES = {
     LIST: "/students",
     CREATE: "/students/create",
     DETAILS: (id: number) => `/students/${id}`,
-    // EDIT: (id: number) => `/students/${id}/edit`,
+    DETAIL: (id: number) => `/students/${id}`,
+    EDIT: (id: number) => `/students/${id}?edit`,
 
   },
 
@@ -56,12 +57,14 @@ export const ROUTES = {
     LIST: "/classes",
     CREATE: "/classes/create",
     DETAILS: (id: number) => `/classes/${id}`,
+    DETAIL: (id: number) => `/classes/${id}`,
   },
 
   SUBJECTS: {
     LIST: "/subjects",
     CREATE: "/subjects/create",
     DETAILS: (id: number) => `/subjects/${id}`,
+    DETAIL: (id: number) => `/subjects/${id}`,
   },
 
   GRADES: {

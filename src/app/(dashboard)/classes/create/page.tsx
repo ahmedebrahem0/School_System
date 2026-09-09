@@ -5,7 +5,7 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/common/PageHeader";
+import PageHeader from "@/components/common/PageHeader";
 import { ClassForm } from "@/features/classes/components/ClassForm";
 import { ROUTES } from "@/constants/routes";
 

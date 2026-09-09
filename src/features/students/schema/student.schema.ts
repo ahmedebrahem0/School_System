@@ -56,3 +56,4 @@ export const studentSchema = z.object({
 // Type inferred from schema
 // Used as form data type throughout StudentForm
 export type StudentSchema = z.infer<typeof studentSchema>;
+export type StudentFormValues = StudentSchema;
