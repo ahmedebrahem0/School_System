@@ -39,7 +39,8 @@ export default function StudentDetailPage() {
   const onConfirmDelete = async () => {
     if (!deleteTarget) return
     await handleDelete(deleteTarget.studentId, deleteTarget.name, {
-      onSuccess: () => router.push(ROUTES.STUDENTS.LIST),
+      redirectToList: false,
+      onSuccess: () => router.replace(ROUTES.STUDENTS.LIST),
     })
   }
 
