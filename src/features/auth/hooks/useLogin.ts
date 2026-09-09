@@ -43,8 +43,9 @@ export const useLogin = (): UseLoginReturn => {
       }
 
       // Extract user data from response
-      // Token is already stored in HttpOnly Cookie by Route Handler
-      const { user }: LoginHandlerResponse = await response.json();
+      const { user, token }: LoginHandlerResponse = await response.json();
+
+      window.localStorage.setItem("token", token);
 
       // Update AuthContext with user data
       // This triggers re-render in Sidebar, Header, etc.
