@@ -10,6 +10,10 @@ export const transformResponse = (data: any, refs: Map<string, any> = new Map())
     return data;
   }
 
+  if (Array.isArray(data)) {
+    return data.map((item) => transformResponse(item, refs));
+  }
+
   // Store object by its $id for later $ref resolution
   if ("$id" in data && !("$ref" in data)) {
     refs.set(data.$id, data);
