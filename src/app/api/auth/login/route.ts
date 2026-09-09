@@ -70,9 +70,9 @@ export async function POST(request: NextRequest) {
             }
         );
 
-        // 7. Return user data to the client
-        // Do NOT return the token — it's safely in the HttpOnly Cookie
-        return NextResponse.json({ user }, { status: 200 });
+        // 7. Return user data and token to the client.
+        // RTK Query sends Bearer tokens from localStorage for backend requests.
+        return NextResponse.json({ user, token }, { status: 200 });
 
     } catch {
         // Network error or backend is down
