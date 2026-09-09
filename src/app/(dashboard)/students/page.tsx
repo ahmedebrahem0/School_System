@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { GraduationCap, Plus } from "lucide-react"
+import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import PageHeader from "@/components/common/PageHeader"
 import { StudentTable } from "@/features/students/components/StudentTable"
