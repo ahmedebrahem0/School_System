@@ -6,6 +6,7 @@
 import { cn } from "@/lib/utils/cn";
 import { type LucideIcon, Inbox } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { isValidElement } from "react";
 
 // ─────────────────────────────────────────────────────
 // EMPTY STATE PROPS
@@ -42,6 +43,8 @@ const EmptyState = ({
 }: EmptyStateProps) => {
   const actionConfig =
     action ?? (actionLabel && onAction ? { label: actionLabel, onClick: onAction } : null);
+  const isIconElement = isValidElement(Icon);
+  const IconComponent = Icon as LucideIcon;
 
   return (
     <div
@@ -57,10 +60,10 @@ const EmptyState = ({
         "bg-zinc-100 flex items-center justify-center",
         "mb-4"
       )}>
-        {typeof Icon === "function" ? (
-          <Icon className="w-8 h-8 text-zinc-400" />
-        ) : (
+        {isIconElement ? (
           Icon
+        ) : (
+          <IconComponent className="w-8 h-8 text-zinc-400" />
         )}
       </div>
 
