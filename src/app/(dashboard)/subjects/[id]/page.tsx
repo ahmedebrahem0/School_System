@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft, Edit2, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -15,11 +15,8 @@ import { SubjectForm } from "@/features/subjects/components/SubjectForm";
 import { useSubject } from "@/features/subjects/hooks/useSubject";
 import { ROUTES } from "@/constants/routes";
 
-interface SubjectDetailPageProps {
-  params: { id: string };
-}
-
-export default function SubjectDetailPage({ params }: SubjectDetailPageProps) {
+export default function SubjectDetailPage() {
+  const params = useParams<{ id: string }>();
   const subjectId = Number(params.id);
   const searchParams = useSearchParams();
   const isEditMode = searchParams.get("edit") === "";
