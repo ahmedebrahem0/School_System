@@ -1,11 +1,13 @@
+"use client"
+
 import { useRouter } from "next/navigation"
 import { Pencil, Trash2, GraduationCap, Calendar, BookOpen } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { AvatarWithInitials } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
-import { formatDateShort, getLetterGrade, getGradeColor, getInitials } from "@/lib/utils/formatters"
+import { formatDateShort, getLetterGrade, getGradeColor } from "@/lib/utils/formatters"
 import { ROUTES } from "@/constants/routes"
 import type { StudentDetails } from "../types"
 
@@ -16,16 +18,22 @@ interface StudentCardProps {
 
 export function StudentCard({ student, onDelete }: StudentCardProps) {
   const router = useRouter()
+  const attendances = student.attendances ?? []
+  const grades = student.grades ?? []
+  const classLabel =
+    student.className ??
+    student.class?.className ??
+    (student.classId ? `Class ${student.classId}` : null)
 
   // ── Attendance summary ────────────────────────────────────────────────────
-  const attendanceSummary = student.attendances.reduce(
+  const attendanceSummary = attendances.reduce(
     (acc, a) => {
       acc[a.status] = (acc[a.status] ?? 0) + 1
       return acc
     },
     {} as Record<string, number>
   )
-  const totalAttendance = student.attendances.length
+  const totalAttendance = attendances.length
   const presentRate =
     totalAttendance > 0
       ? Math.round(((attendanceSummary.Present ?? 0) / totalAttendance) * 100)
@@ -33,10 +41,10 @@ export function StudentCard({ student, onDelete }: StudentCardProps) {
 
   // ── Average grade ─────────────────────────────────────────────────────────
   const avgGrade =
-    student.grades.length > 0
+    grades.length > 0
       ? Math.round(
-          student.grades.reduce((sum, g) => sum + g.grade, 0) /
-            student.grades.length
+          grades.reduce((sum, g) => sum + g.grade, 0) /
+            grades.length
         )
       : null
 
@@ -59,9 +67,9 @@ export function StudentCard({ student, onDelete }: StudentCardProps) {
               <p className="text-[13px] text-white/60 font-mono mt-0.5">
                 ID: {student.studentId}
               </p>
-              {student.class && (
+              {classLabel && (
                 <Badge variant="student" className="mt-2 bg-white/15 text-white border-0">
-                  {student.class.className}
+                  {classLabel}
                 </Badge>
               )}
             </div>
@@ -104,10 +112,9 @@ export function StudentCard({ student, onDelete }: StudentCardProps) {
           {/* Avg Grade */}
           <div className="px-4 py-3 text-center">
             <p
-              className="text-[20px] font-[700] font-mono"
-              style={{
-                color: avgGrade !== null ? getGradeColor(avgGrade) : "#71717A",
-              }}
+              className={`text-[20px] font-[700] font-mono ${
+                avgGrade !== null ? getGradeColor(avgGrade) : "text-zinc-500"
+              }`}
             >
               {avgGrade !== null ? avgGrade : "—"}
             </p>
@@ -116,7 +123,7 @@ export function StudentCard({ student, onDelete }: StudentCardProps) {
           {/* Subjects */}
           <div className="px-4 py-3 text-center">
             <p className="text-[20px] font-[700] font-mono text-zinc-950">
-              {student.grades.length}
+              {grades.length}
             </p>
             <p className="text-[11px] text-zinc-500 mt-0.5">Subjects</p>
           </div>
@@ -154,7 +161,7 @@ export function StudentCard({ student, onDelete }: StudentCardProps) {
               <div>
                 <p className="text-[11px] text-zinc-400">Class</p>
                 <p className="text-[14px] text-zinc-700">
-                  {student.class?.className ?? "—"}
+                  {classLabel ?? "—"}
                 </p>
               </div>
             </div>
@@ -164,7 +171,7 @@ export function StudentCard({ student, onDelete }: StudentCardProps) {
         <Separator />
 
         {/* ── Grades ──────────────────────────────────────────────────────── */}
-        {student.grades.length > 0 && (
+        {grades.length > 0 && (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-[13px] font-[600] uppercase tracking-wide text-zinc-400">
@@ -174,7 +181,7 @@ export function StudentCard({ student, onDelete }: StudentCardProps) {
             </div>
 
             <div className="space-y-2">
-              {student.grades.map((g) => (
+              {grades.map((g) => (
                 <div
                   key={g.id}
                   className="flex items-center justify-between py-1.5"
@@ -183,10 +190,7 @@ export function StudentCard({ student, onDelete }: StudentCardProps) {
                     {g.subject?.subjectName ?? `Subject ${g.subjectId}`}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span
-                      className="text-[14px] font-[600] font-mono"
-                      style={{ color: getGradeColor(g.grade) }}
-                    >
+                    <span className={`text-[14px] font-[600] font-mono ${getGradeColor(g.grade)}`}>
                       {g.grade}
                     </span>
                     <Badge
