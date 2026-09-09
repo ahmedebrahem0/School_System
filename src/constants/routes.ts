@@ -75,6 +75,8 @@ export const ROUTES = {
   ATTENDANCES: {
     LIST: "/attendances",
     CREATE: "/attendances/create",
+    DETAILS: (id: number) => `/attendances/${id}`,
+    EDIT: (id: number) => `/attendances/${id}?edit`,
   },
 
   REPORTS: "/reports",
