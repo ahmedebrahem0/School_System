@@ -32,12 +32,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import ConfirmDialog from "@/components/common/ConfirmDialog"
+import ErrorMessage from "@/components/common/ErrorMessage"
 import EmptyState from "@/components/common/EmptyState"
 import { useStudents } from "../hooks/useStudents"
 import { useStudentActions } from "../hooks/useStudentActions"
 import { formatDateShort } from "@/lib/utils/formatters"
 import { ROUTES } from "@/constants/routes"
 import type { Student } from "../types"
+import { StudentTableSkeleton } from "./StudentTable.skeleton"
 
 const PAGE_SIZE = 10
 
@@ -65,6 +67,8 @@ export function StudentTable() {
     clearFilters,
     isLoading,
     isFetching,
+    isError,
+    refetch,
     allStudents,
   } = useStudents({ pageSize: PAGE_SIZE })
 
@@ -75,7 +79,13 @@ export function StudentTable() {
     new Map(
       allStudents
         .filter((s) => s.classId !== null)
-        .map((s) => [s.classId, s.classId])
+        .map((s) => [
+          s.classId,
+          {
+            id: s.classId as number,
+            label: s.className ?? s.class?.className ?? `Class ${s.classId}`,
+          },
+        ])
     ).values()
   )
 
@@ -89,6 +99,22 @@ export function StudentTable() {
 
   const startIndex = (page - 1) * PAGE_SIZE + 1
   const endIndex = Math.min(page * PAGE_SIZE, total)
+
+  if (isLoading) {
+    return <StudentTableSkeleton />
+  }
+
+  if (isError) {
+    return (
+      <div className="rounded-[10px] border border-zinc-200 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+        <ErrorMessage
+          title="Failed to load students"
+          description="An error occurred while fetching the students list."
+          onRetry={refetch}
+        />
+      </div>
+    )
+  }
 
   return (
     <>
@@ -121,9 +147,9 @@ export function StudentTable() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Classes</SelectItem>
-              {uniqueClasses.map((classId) => (
-                <SelectItem key={classId} value={String(classId)}>
-                  Class {classId}
+              {uniqueClasses.map((cls) => (
+                <SelectItem key={cls.id} value={String(cls.id)}>
+                  {cls.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -151,6 +177,7 @@ export function StudentTable() {
         </div>
 
         {/* ── Table ──────────────────────────────────────────────────────── */}
+        <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -222,9 +249,9 @@ export function StudentTable() {
 
                   {/* Class */}
                   <TableCell>
-                    {student.classId ? (
+                    {student.className || student.class?.className || student.classId ? (
                       <Badge variant="primary">
-                        Class {student.classId}
+                        {student.className ?? student.class?.className ?? `Class ${student.classId}`}
                       </Badge>
                     ) : (
                       <span className="text-[13px] text-zinc-400">—</span>
@@ -239,7 +266,7 @@ export function StudentTable() {
                         variant="ghost"
                         size="icon-sm"
                         onClick={() =>
-                          router.push(ROUTES.STUDENTS.DETAILS(student.studentId))
+                          router.push(ROUTES.STUDENTS.EDIT(student.studentId))
                         }
                         aria-label={`View ${student.name}`}
                         className="text-zinc-400 hover:text-zinc-700"
@@ -277,6 +304,7 @@ export function StudentTable() {
             )}
           </TableBody>
         </Table>
+        </div>
 
         {/* ── Pagination ─────────────────────────────────────────────────── */}
         {total > 0 && (
