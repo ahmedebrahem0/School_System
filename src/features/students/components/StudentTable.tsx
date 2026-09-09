@@ -266,7 +266,7 @@ export function StudentTable() {
                         variant="ghost"
                         size="icon-sm"
                         onClick={() =>
-                          router.push(ROUTES.STUDENTS.EDIT(student.studentId))
+                          router.push(ROUTES.STUDENTS.DETAILS(student.studentId))
                         }
                         aria-label={`View ${student.name}`}
                         className="text-zinc-400 hover:text-zinc-700"
@@ -279,7 +279,7 @@ export function StudentTable() {
                         variant="ghost"
                         size="icon-sm"
                         onClick={() =>
-                          router.push(ROUTES.STUDENTS.DETAILS(student.studentId))
+                          router.push(ROUTES.STUDENTS.EDIT(student.studentId))
                         }
                         aria-label={`Edit ${student.name}`}
                         className="text-zinc-400 hover:text-[#1E3A8A]"
