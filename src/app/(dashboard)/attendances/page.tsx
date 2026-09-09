@@ -1,3 +1,5 @@
+import { AttendancesManagementPage } from "@/features/attendances/components/AttendancesManagementPage";
+
 export default function AttendancesPage() {
-  return <main className="p-6">Attendance management is under construction.</main>;
+  return <AttendancesManagementPage />;
 }
