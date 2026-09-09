@@ -79,6 +79,12 @@ export const ROUTES = {
     DETAILS: (id: number) => `/time-slots/${id}`,
   },
 
+  TIMETABLES: {
+    LIST: "/timetables",
+    CREATE: "/timetables/create",
+    DETAILS: (id: number) => `/timetables/${id}`,
+  },
+
   GRADES: {
     LIST: "/grades",
     DETAILS: (id: number) => `/grades/${id}`,

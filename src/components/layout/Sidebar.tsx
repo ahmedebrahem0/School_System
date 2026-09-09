@@ -66,6 +66,7 @@ const NAV_CONFIG: Record<string, NavSection[]> = {
         { label: "Grades",      href: ROUTES.GRADES.LIST,      icon: TrendingUp },
         { label: "Attendances", href: ROUTES.ATTENDANCES.LIST,  icon: CalendarCheck },
         { label: "Time Slots",  href: ROUTES.TIME_SLOTS.LIST,   icon: ClipboardList },
+        { label: "Timetables",  href: ROUTES.TIMETABLES.LIST,   icon: CalendarCheck },
         { label: "Reports",     href: ROUTES.REPORTS,           icon: BarChart3 },
       ],
     },
