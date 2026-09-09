@@ -73,6 +73,12 @@ export const ROUTES = {
     DETAILS: (id: number) => `/classrooms/${id}`,
   },
 
+  TIME_SLOTS: {
+    LIST: "/time-slots",
+    CREATE: "/time-slots/create",
+    DETAILS: (id: number) => `/time-slots/${id}`,
+  },
+
   GRADES: {
     LIST: "/grades",
     DETAILS: (id: number) => `/grades/${id}`,
