@@ -1,3 +1,5 @@
-export default function AdminUsersPage() {
-  return <main className="p-6">User management is under construction.</main>;
+import { AdminUsersPage } from "@/features/admin/components/AdminUsersPage";
+
+export default function Page() {
+  return <AdminUsersPage />;
 }
