@@ -1,7 +1,6 @@
 import PageHeader from "@/components/common/PageHeader"
 import { StudentForm } from "@/features/students/components/StudentForm"
 import { Card, CardContent } from "@/components/ui/card"
-import { ROUTES } from "@/constants/routes"
 
 export const metadata = {
   title: "Add Student | EduSystem",
