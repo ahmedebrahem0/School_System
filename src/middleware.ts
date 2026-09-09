@@ -25,6 +25,7 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
   "/admin/roles":       "roles",
   "/reports":           "reports",
   "/teacher/my-classes": "my-classes",
+  "/teacher/grades":     "grades",
   "/student/my-profile": "my-profile",
   "/student/my-grades":  "my-grades",
   "/student/my-attendance": "my-attendance",
