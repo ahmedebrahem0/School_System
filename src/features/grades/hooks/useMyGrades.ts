@@ -34,7 +34,9 @@ export const summarizeGrades = (grades: Grade[]): GradeSummary => {
 };
 
 export const useMyGrades = () => {
-  const query = useGetMyGradesQuery();
+  const query = useGetMyGradesQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
   const grades = useMemo(() => query.data ?? [], [query.data]);
   const summary = useMemo(() => summarizeGrades(grades), [grades]);
 
