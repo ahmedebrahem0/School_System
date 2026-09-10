@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, CalendarDays, Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import PageHeader from "@/components/common/PageHeader";
@@ -24,6 +24,14 @@ import { useAttendanceActions } from "@/features/attendances/hooks/useAttendance
 import { formatDateShort } from "@/lib/utils/formatters";
 
 export default function Page() {
+  return (
+    <Suspense fallback={<AttendanceTableSkeleton />}>
+      <AttendanceDetailsContent />
+    </Suspense>
+  );
+}
+
+function AttendanceDetailsContent() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
