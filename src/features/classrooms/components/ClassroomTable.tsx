@@ -23,7 +23,7 @@ export function ClassroomTable({ classrooms }: ClassroomTableProps) {
   const handleConfirmDelete = async () => {
     if (!deleteConfirm.classroom) return;
 
-    await remove(deleteConfirm.classroom.id, {
+    await remove(deleteConfirm.classroom.classroomId, {
       onSuccess: () => setDeleteConfirm({ isOpen: false }),
     });
   };
@@ -48,7 +48,7 @@ export function ClassroomTable({ classrooms }: ClassroomTableProps) {
           <tbody>
             {classrooms.map((classroom) => (
               <tr
-                key={classroom.id}
+                key={classroom.classroomId}
                 className="border-b border-zinc-100 transition-colors hover:bg-zinc-50"
               >
                 <td className="px-6 py-4 text-[14px] font-medium text-zinc-900">
