@@ -1,5 +1,5 @@
 export interface TimeSlot {
-  id: number;
+  timeSlotId: number;
   startTime: string;
   endTime: string;
 }
