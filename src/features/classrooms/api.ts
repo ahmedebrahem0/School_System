@@ -14,7 +14,10 @@ export const classroomsApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Classroom" as const, id })),
+              ...result.map(({ classroomId }) => ({
+                type: "Classroom" as const,
+                id: classroomId,
+              })),
               { type: "Classroom" as const, id: "LIST" },
             ]
           : [{ type: "Classroom" as const, id: "LIST" }],
