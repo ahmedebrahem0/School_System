@@ -45,7 +45,7 @@ export const timetablesApi = baseApi.injectEndpoints({
         url: API_ENDPOINTS.TIMETABLES.MY_TIMETABLE,
         method: "GET",
       }),
-      keepUnusedDataFor: CACHE_TIMES.SHORT,
+      keepUnusedDataFor: CACHE_TIMES.DYNAMIC,
       providesTags: [{ type: "Timetable" as const, id: "MY_TIMETABLE" }],
     }),
 
