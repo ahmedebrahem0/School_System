@@ -3,6 +3,11 @@ import { API_ENDPOINTS } from "@/constants/api-endpoints";
 import { CACHE_TIMES } from "@/constants/cache-times";
 import type { TimeSlot, CreateTimeSlotDto, UpdateTimeSlotDto } from "./types";
 
+const toTimeSlotBody = (data: CreateTimeSlotDto | UpdateTimeSlotDto) => ({
+  StartTime: data.startTime,
+  EndTime: data.endTime,
+});
+
 export const timeSlotsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getTimeSlots: builder.query<TimeSlot[], void>({
@@ -36,7 +41,7 @@ export const timeSlotsApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: API_ENDPOINTS.TIME_SLOTS.GET_ALL,
         method: "POST",
-        body: data,
+        body: toTimeSlotBody(data),
       }),
       invalidatesTags: [{ type: "TimeSlot" as const, id: "LIST" }],
     }),
@@ -48,7 +53,7 @@ export const timeSlotsApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: API_ENDPOINTS.TIME_SLOTS.BY_ID(id),
         method: "PUT",
-        body: data,
+        body: toTimeSlotBody(data),
       }),
       invalidatesTags: (_, __, { id }) => [
         { type: "TimeSlot" as const, id },
