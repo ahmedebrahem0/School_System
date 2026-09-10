@@ -43,6 +43,12 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const userCookie = request.cookies.get("user")?.value;
 
+  if (pathname === "/") {
+    return NextResponse.redirect(
+      new URL(token ? ROUTES.DASHBOARD : ROUTES.AUTH.LOGIN, request.url)
+    );
+  }
+
   // ─────────────────────────────────────────────────
   // STEP 1: CHECK IF ROUTE IS PUBLIC
   // Public routes don't need authentication
