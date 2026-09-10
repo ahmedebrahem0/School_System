@@ -56,7 +56,7 @@ export function TeacherSubjectTable({ teacherId, subjectsMap = {} }: TeacherSubj
                 className="border-b border-zinc-100 transition-colors hover:bg-zinc-50"
               >
                 <td className="px-6 py-4 text-[14px] font-medium text-zinc-900">
-                  {subjectsMap[ts.subjectId] || `Subject ${ts.subjectId}`}
+                  {ts.subjectName || subjectsMap[ts.subjectId] || `Subject ${ts.subjectId}`}
                 </td>
                 <td className="px-6 py-4">
                   <button
