@@ -49,7 +49,7 @@ export const getRoleSummaries = (users: AdminUser[]): AdminRoleSummary[] =>
         : role === "Teacher"
         ? "Class, grade, and attendance tools"
         : "Student self-service access",
-    count: users.filter((user) => user.roles.includes(role)).length,
+    count: users.filter((user) => (user.roles ?? []).includes(role)).length,
   }));
 
 export const useAdminUsers = (
@@ -70,9 +70,9 @@ export const useAdminUsers = (
     return (data ?? []).filter((user) => {
       const roles = user.roles ?? [];
       const matchesSearch = query
-        ? user.fullName.toLowerCase().includes(query) ||
-          user.userName.toLowerCase().includes(query) ||
-          user.email.toLowerCase().includes(query)
+        ? (user.fullName ?? "").toLowerCase().includes(query) ||
+          (user.userName ?? "").toLowerCase().includes(query) ||
+          (user.email ?? "").toLowerCase().includes(query)
         : true;
 
       return (
