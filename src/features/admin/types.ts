@@ -2,11 +2,11 @@ import type { Role } from "@/constants/roles";
 
 export interface AdminUser {
   id: string;
-  userName: string;
-  email: string;
-  fullName: string;
+  userName: string | null;
+  email: string | null;
+  fullName: string | null;
   gender: string | null;
-  roles: Role[];
+  roles: Role[] | null;
 }
 
 export interface AssignRoleDto {
