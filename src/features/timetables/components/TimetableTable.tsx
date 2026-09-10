@@ -33,7 +33,7 @@ export function TimetableTable({
   const handleConfirmDelete = async () => {
     if (!deleteConfirm.timetable) return;
 
-    await remove(deleteConfirm.timetable.id, {
+    await remove(deleteConfirm.timetable.timetableId, {
       onSuccess: () => setDeleteConfirm({ isOpen: false }),
     });
   };
@@ -67,23 +67,32 @@ export function TimetableTable({
           <tbody>
             {timetables.map((timetable) => (
               <tr
-                key={timetable.id}
+                key={timetable.timetableId}
                 className="border-b border-zinc-100 transition-colors hover:bg-zinc-50"
               >
                 <td className="px-6 py-4 text-[14px] font-medium text-zinc-900">
-                  {classesMap[timetable.classId] || `Class ${timetable.classId}`}
+                  {timetable.className ||
+                    classesMap[timetable.classId] ||
+                    `Class ${timetable.classId}`}
                 </td>
                 <td className="px-6 py-4 text-[14px] text-zinc-600">
-                  {subjectsMap[timetable.subjectId] || `Subject ${timetable.subjectId}`}
+                  {timetable.subjectName ||
+                    subjectsMap[timetable.subjectId] ||
+                    `Subject ${timetable.subjectId}`}
                 </td>
                 <td className="px-6 py-4 text-[14px] text-zinc-600">
                   {timetable.dayOfWeek}
                 </td>
                 <td className="px-6 py-4 text-[14px] text-zinc-600">
-                  {timeSlotsMap[timetable.timeSlotId] || `Slot ${timetable.timeSlotId}`}
+                  {(timetable.startTime && timetable.endTime
+                    ? `${timetable.startTime} - ${timetable.endTime}`
+                    : timeSlotsMap[timetable.timeSlotId]) ||
+                    `Slot ${timetable.timeSlotId}`}
                 </td>
                 <td className="px-6 py-4 text-[14px] text-zinc-600">
-                  {classroomsMap[timetable.classroomId] || `Room ${timetable.classroomId}`}
+                  {timetable.roomNumber ||
+                    classroomsMap[timetable.classroomId] ||
+                    `Room ${timetable.classroomId}`}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
