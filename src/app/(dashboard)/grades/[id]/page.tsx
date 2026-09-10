@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import PageHeader from "@/components/common/PageHeader";
@@ -23,6 +23,14 @@ import { GradeTableSkeleton } from "@/features/grades/components/GradeTable.skel
 import { useGradeActions } from "@/features/grades/hooks/useGradeActions";
 
 export default function Page() {
+  return (
+    <Suspense fallback={<GradeTableSkeleton />}>
+      <GradeDetailsContent />
+    </Suspense>
+  );
+}
+
+function GradeDetailsContent() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
