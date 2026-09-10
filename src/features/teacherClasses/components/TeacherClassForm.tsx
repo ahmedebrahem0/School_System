@@ -91,8 +91,8 @@ export function TeacherClassForm({
                       <SelectContent>
                         {classes.map((cls) => (
                           <SelectItem
-                            key={cls.id}
-                            value={cls.id.toString()}
+                            key={cls.classId}
+                            value={cls.classId.toString()}
                           >
                             {cls.className}
                           </SelectItem>
