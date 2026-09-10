@@ -133,7 +133,10 @@ export function TimetableForm({
                       </SelectTrigger>
                       <SelectContent>
                         {classes.map((cls) => (
-                          <SelectItem key={cls.id} value={cls.id.toString()}>
+                          <SelectItem
+                            key={cls.classId}
+                            value={cls.classId.toString()}
+                          >
                             {cls.className}
                           </SelectItem>
                         ))}
@@ -162,7 +165,10 @@ export function TimetableForm({
                       </SelectTrigger>
                       <SelectContent>
                         {subjects.map((subject) => (
-                          <SelectItem key={subject.id} value={subject.id.toString()}>
+                          <SelectItem
+                            key={subject.subjectId}
+                            value={subject.subjectId.toString()}
+                          >
                             {subject.subjectName}
                           </SelectItem>
                         ))}
