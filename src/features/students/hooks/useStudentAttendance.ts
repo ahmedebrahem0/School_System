@@ -19,7 +19,8 @@ export const useStudentAttendance = (
 ) => {
   const { data, isLoading, isFetching, isError, refetch } =
     useGetStudentAttendanceQuery(
-      options.studentName ? { studentName: options.studentName } : undefined
+      options.studentName ? { studentName: options.studentName } : undefined,
+      { refetchOnMountOrArgChange: true }
     );
 
   const records = useMemo<StudentAttendanceRecord[]>(
