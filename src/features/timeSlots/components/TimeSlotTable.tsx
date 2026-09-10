@@ -23,7 +23,7 @@ export function TimeSlotTable({ timeSlots }: TimeSlotTableProps) {
   const handleConfirmDelete = async () => {
     if (!deleteConfirm.timeSlot) return;
 
-    await remove(deleteConfirm.timeSlot.id, {
+    await remove(deleteConfirm.timeSlot.timeSlotId, {
       onSuccess: () => setDeleteConfirm({ isOpen: false }),
     });
   };
@@ -48,7 +48,7 @@ export function TimeSlotTable({ timeSlots }: TimeSlotTableProps) {
           <tbody>
             {timeSlots.map((timeSlot) => (
               <tr
-                key={timeSlot.id}
+                key={timeSlot.timeSlotId}
                 className="border-b border-zinc-100 transition-colors hover:bg-zinc-50"
               >
                 <td className="px-6 py-4 text-[14px] font-medium text-zinc-900">
