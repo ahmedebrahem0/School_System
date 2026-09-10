@@ -11,7 +11,9 @@ export function useMyTimetable(options: UseMyTimetableOptions = {}) {
   const { limit = 10 } = options;
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQueryState] = useState("");
-  const query = useGetMyTimetableQuery();
+  const query = useGetMyTimetableQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const filteredTimetables = useMemo(() => {
     const value = searchQuery.trim().toLowerCase();
