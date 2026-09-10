@@ -5,7 +5,7 @@
 import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft, Edit2, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/common/PageHeader";
 import Loader from "@/components/common/Loader";
@@ -16,6 +16,14 @@ import { useSubject } from "@/features/subjects/hooks/useSubject";
 import { ROUTES } from "@/constants/routes";
 
 export default function SubjectDetailPage() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <SubjectDetailContent />
+    </Suspense>
+  );
+}
+
+function SubjectDetailContent() {
   const params = useParams<{ id: string }>();
   const subjectId = Number(params.id);
   const searchParams = useSearchParams();
