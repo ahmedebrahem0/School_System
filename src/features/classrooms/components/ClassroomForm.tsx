@@ -59,7 +59,7 @@ export function ClassroomForm({
     }
 
     if (classroom) {
-      await update(classroom.id, data, {
+      await update(classroom.classroomId, data, {
         onSuccess: () => {
           onOpenChange(false);
           form.reset();
