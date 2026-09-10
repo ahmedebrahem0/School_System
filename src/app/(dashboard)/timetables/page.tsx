@@ -55,14 +55,14 @@ export default function TimetablesPage() {
   );
 
   const classroomsMap = useMemo(
-    () => Object.fromEntries(classrooms.map((r) => [r.id, r.roomNumber])),
+    () => Object.fromEntries(classrooms.map((r) => [r.classroomId, r.roomNumber])),
     [classrooms]
   );
 
   const timeSlotsMap = useMemo(
     () =>
       Object.fromEntries(
-        timeSlots.map((t) => [t.id, `${t.startTime} - ${t.endTime}`])
+        timeSlots.map((t) => [t.timeSlotId, `${t.startTime} - ${t.endTime}`])
       ),
     [timeSlots]
   );
