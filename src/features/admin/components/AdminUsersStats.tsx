@@ -11,15 +11,17 @@ interface AdminUsersStatsProps {
 }
 
 export function AdminUsersStats({ users, pendingCount }: AdminUsersStatsProps) {
-  const admins = users.filter((user) => user.roles.includes(ROLES.ADMIN)).length;
+  const admins = users.filter((user) =>
+    (user.roles ?? []).includes(ROLES.ADMIN)
+  ).length;
   const teachers = users.filter((user) =>
-    user.roles.includes(ROLES.TEACHER)
+    (user.roles ?? []).includes(ROLES.TEACHER)
   ).length;
   const students = users.filter((user) =>
-    user.roles.includes(ROLES.STUDENT)
+    (user.roles ?? []).includes(ROLES.STUDENT)
   ).length;
   const pending =
-    pendingCount ?? users.filter((user) => user.roles.length === 0).length;
+    pendingCount ?? users.filter((user) => (user.roles ?? []).length === 0).length;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
