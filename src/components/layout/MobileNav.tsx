@@ -217,7 +217,7 @@ const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-3 scrollbar-none">
+        <nav className="flex-1 overflow-y-auto py-3 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {navSections.map((section) => (
             <div key={section.label}>
               <p className="px-6 pt-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40">
