@@ -109,9 +109,15 @@ export function useTeacherDashboardStats() {
 }
 
 export function useStudentDashboardStats() {
-  const gradesQuery = useGetMyGradesQuery();
-  const attendanceQuery = useGetStudentAttendanceQuery();
-  const timetableQuery = useGetMyTimetableQuery();
+  const gradesQuery = useGetMyGradesQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+  const attendanceQuery = useGetStudentAttendanceQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
+  const timetableQuery = useGetMyTimetableQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const stats = useMemo(() => {
     const grades = gradesQuery.data ?? [];
