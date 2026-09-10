@@ -8,7 +8,6 @@ import {
 } from "../api";
 import { ROUTES } from "@/constants/routes";
 import type { GradeFormData } from "../types";
-// Hook for managing grade actions
 export const useGradeActions = () => {
   const router = useRouter();
   const [createMutation, { isLoading: isCreating }] = useCreateGradeMutation();
