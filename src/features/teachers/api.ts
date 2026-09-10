@@ -7,6 +7,7 @@ import type {
   CreateTeacherDto,
   Teacher,
   TeacherDetails,
+  TeacherRelation,
   UpdateTeacherDto,
 } from "./types";
 
@@ -43,6 +44,37 @@ export const teachersApi = baseApi.injectEndpoints({
       }),
       keepUnusedDataFor: CACHE_TIMES.NORMAL,
       providesTags: (_, __, id) => [{ type: "Teacher" as const, id }],
+    }),
+
+    getMyTeacherProfile: builder.query<TeacherDetails, void>({
+      query: () => ({
+        url: API_ENDPOINTS.TEACHERS.MY_PROFILE,
+        method: "GET",
+      }),
+      keepUnusedDataFor: CACHE_TIMES.NORMAL,
+      providesTags: [{ type: "Teacher" as const, id: "MY_PROFILE" }],
+    }),
+
+    getMyTeacherClasses: builder.query<TeacherRelation[], void>({
+      query: () => ({
+        url: API_ENDPOINTS.TEACHERS.MY_CLASSES,
+        method: "GET",
+      }),
+      transformResponse: (response: TeacherRelation | TeacherRelation[] | null) =>
+        Array.isArray(response) ? response : response ? [response] : [],
+      keepUnusedDataFor: CACHE_TIMES.NORMAL,
+      providesTags: [{ type: "Teacher" as const, id: "MY_CLASSES" }],
+    }),
+
+    getMyTeacherSubjects: builder.query<TeacherRelation[], void>({
+      query: () => ({
+        url: API_ENDPOINTS.TEACHERS.MY_SUBJECTS,
+        method: "GET",
+      }),
+      transformResponse: (response: TeacherRelation | TeacherRelation[] | null) =>
+        Array.isArray(response) ? response : response ? [response] : [],
+      keepUnusedDataFor: CACHE_TIMES.NORMAL,
+      providesTags: [{ type: "Teacher" as const, id: "MY_SUBJECTS" }],
     }),
 
     createTeacher: builder.mutation<Teacher, CreateTeacherDto>({
@@ -89,6 +121,9 @@ export const teachersApi = baseApi.injectEndpoints({
 export const {
   useGetTeachersQuery,
   useGetTeacherQuery,
+  useGetMyTeacherProfileQuery,
+  useGetMyTeacherClassesQuery,
+  useGetMyTeacherSubjectsQuery,
   useCreateTeacherMutation,
   useUpdateTeacherMutation,
   useDeleteTeacherMutation,
