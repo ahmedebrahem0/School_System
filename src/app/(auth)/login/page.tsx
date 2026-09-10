@@ -5,6 +5,7 @@
 // All business logic is handled in the useLogin hook
 
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import LoginForm from "@/features/auth/components/LoginForm";
 
 export const metadata: Metadata = {
@@ -13,7 +14,11 @@ export const metadata: Metadata = {
 };
 
 const LoginPage = () => {
-  return <LoginForm />;
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
 };
 
 export default LoginPage;
