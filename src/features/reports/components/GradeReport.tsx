@@ -1,37 +1,16 @@
 "use client";
 
-import { useMemo } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useGetStudentsQuery } from "@/features/students/api";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Award, BarChart3, Target, TrendingDown, TrendingUp } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ErrorMessage from "@/components/common/ErrorMessage";
-
-interface GradeStats {
-  totalStudents: number;
-  averageGrade: number;
-  topPerformer: string;
-  passingRate: number;
-}
+import { useGradeReport } from "../hooks/useReports";
+import { GradeReportSkeleton } from "./GradeReport.skeleton";
 
 export function GradeReport() {
-  const { data: students = [], isLoading, isError, refetch } = useGetStudentsQuery();
-
-  const stats = useMemo<GradeStats>(() => {
-    const totalStudents = students.length;
-    // Mock grade data — in real app would come from /api/Grades
-    const averageGrade = 78;
-    const passingRate = 92;
-
-    return {
-      totalStudents,
-      averageGrade,
-      topPerformer: "Ali Ahmed",
-      passingRate,
-    };
-  }, [students]);
+  const { stats, isLoading, isError, refetch } = useGradeReport();
 
   if (isLoading) {
-    return <Skeleton className="h-64 w-full rounded" />;
+    return <GradeReportSkeleton />;
   }
 
   if (isError) {
@@ -45,44 +24,73 @@ export function GradeReport() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-zinc-600">Total Students</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+            <BarChart3 className="size-4 text-blue-600" />
+            Total Grades
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-zinc-900">{stats.totalStudents}</div>
-          <p className="text-xs text-zinc-500 mt-1">Evaluated</p>
+          <div className="text-2xl font-bold text-zinc-900">{stats.totalGrades}</div>
+          <p className="mt-1 text-xs text-zinc-500">Recorded entries</p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-zinc-600">Average Grade</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+            <Target className="size-4 text-teal-600" />
+            Average Grade
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-blue-600">{stats.averageGrade}</div>
-          <p className="text-xs text-zinc-500 mt-1">Out of 100</p>
+          <div className="text-2xl font-bold text-teal-600">
+            {stats.averageGrade.toFixed(1)}
+          </div>
+          <p className="mt-1 text-xs text-zinc-500">Out of 100</p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-zinc-600">Passing Rate</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+            <Award className="size-4 text-emerald-600" />
+            Passing Rate
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-green-600">{stats.passingRate}%</div>
-          <p className="text-xs text-zinc-500 mt-1">60+ Score</p>
+          <div className="text-2xl font-bold text-emerald-600">
+            {stats.passingRate.toFixed(1)}%
+          </div>
+          <p className="mt-1 text-xs text-zinc-500">60+ score</p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-zinc-600">Top Performer</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+            <TrendingUp className="size-4 text-amber-600" />
+            Highest Grade
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-sm font-bold text-zinc-900 truncate">{stats.topPerformer}</div>
-          <p className="text-xs text-zinc-500 mt-1">Highest Score</p>
+          <div className="text-2xl font-bold text-amber-600">{stats.highestGrade}</div>
+          <p className="mt-1 truncate text-xs text-zinc-500">{stats.topPerformer}</p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+            <TrendingDown className="size-4 text-red-600" />
+            Lowest Grade
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold text-red-600">{stats.lowestGrade}</div>
+          <p className="mt-1 text-xs text-zinc-500">Needs follow-up</p>
         </CardContent>
       </Card>
     </div>
