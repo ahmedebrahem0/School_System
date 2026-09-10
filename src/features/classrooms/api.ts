@@ -3,6 +3,11 @@ import { API_ENDPOINTS } from "@/constants/api-endpoints";
 import { CACHE_TIMES } from "@/constants/cache-times";
 import type { Classroom, CreateClassroomDto, UpdateClassroomDto } from "./types";
 
+const toClassroomBody = (data: CreateClassroomDto | UpdateClassroomDto) => ({
+  RoomNumber: data.roomNumber,
+  Capacity: data.capacity,
+});
+
 export const classroomsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getClassrooms: builder.query<Classroom[], void>({
@@ -36,7 +41,7 @@ export const classroomsApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: API_ENDPOINTS.CLASSROOMS.GET_ALL,
         method: "POST",
-        body: data,
+        body: toClassroomBody(data),
       }),
       invalidatesTags: [{ type: "Classroom" as const, id: "LIST" }],
     }),
@@ -48,7 +53,7 @@ export const classroomsApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: API_ENDPOINTS.CLASSROOMS.BY_ID(id),
         method: "PUT",
-        body: data,
+        body: toClassroomBody(data),
       }),
       invalidatesTags: (_, __, { id }) => [
         { type: "Classroom" as const, id },
