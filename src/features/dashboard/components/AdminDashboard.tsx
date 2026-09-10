@@ -18,14 +18,18 @@ export function AdminDashboard() {
   const { data: classes = [] } = useGetClassesQuery();
   const { data: subjects = [] } = useGetSubjectsQuery();
 
+  const hasUsers = users.length > 0;
+  const getRoleCount = (role: typeof ROLES[keyof typeof ROLES]) =>
+    users.filter((u) => (u.roles ?? []).includes(role)).length;
+
   const stats = {
     totalUsers: users.length,
-    admins: users.filter((u) => u.roles.includes(ROLES.ADMIN)).length,
-    teachers: users.filter((u) => u.roles.includes(ROLES.TEACHER)).length,
-    students: users.filter((u) => u.roles.includes(ROLES.STUDENT)).length,
+    admins: getRoleCount(ROLES.ADMIN),
+    teachers: getRoleCount(ROLES.TEACHER),
+    students: getRoleCount(ROLES.STUDENT),
     classes: classes.length,
     subjects: subjects.length,
-    pending: users.filter((u) => u.roles.length === 0).length,
+    pending: users.filter((u) => (u.roles ?? []).length === 0).length,
   };
 
   return (
@@ -119,15 +123,15 @@ export function AdminDashboard() {
               <div className="space-y-1">
                 <div className="flex justify-between text-sm">
                   <span>Admins</span>
-                  <span className="font-semibold text-indigo-600">{((stats.admins / stats.totalUsers) * 100).toFixed(1)}%</span>
+                  <span className="font-semibold text-indigo-600">{hasUsers ? ((stats.admins / stats.totalUsers) * 100).toFixed(1) : "0.0"}%</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Teachers</span>
-                  <span className="font-semibold text-teal-600">{((stats.teachers / stats.totalUsers) * 100).toFixed(1)}%</span>
+                  <span className="font-semibold text-teal-600">{hasUsers ? ((stats.teachers / stats.totalUsers) * 100).toFixed(1) : "0.0"}%</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Students</span>
-                  <span className="font-semibold text-blue-600">{((stats.students / stats.totalUsers) * 100).toFixed(1)}%</span>
+                  <span className="font-semibold text-blue-600">{hasUsers ? ((stats.students / stats.totalUsers) * 100).toFixed(1) : "0.0"}%</span>
                 </div>
               </div>
             </div>
