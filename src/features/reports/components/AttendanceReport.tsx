@@ -1,39 +1,16 @@
 "use client";
 
-import { useMemo } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useGetStudentsQuery } from "@/features/students/api";
-import { Skeleton } from "@/components/ui/skeleton";
+import { CalendarCheck, Clock, UserCheck, UserX } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ErrorMessage from "@/components/common/ErrorMessage";
-
-interface AttendanceStats {
-  total: number;
-  present: number;
-  absent: number;
-  presentPercentage: number;
-  absentPercentage: number;
-}
+import { useAttendanceReport } from "../hooks/useReports";
+import { AttendanceReportSkeleton } from "./AttendanceReport.skeleton";
 
 export function AttendanceReport() {
-  const { data: students = [], isLoading, isError, refetch } = useGetStudentsQuery();
-
-  const stats = useMemo<AttendanceStats>(() => {
-    const total = students.length;
-    // Mock attendance data — in real app would come from /api/Attendances
-    const present = Math.floor(total * 0.85);
-    const absent = total - present;
-
-    return {
-      total,
-      present,
-      absent,
-      presentPercentage: total > 0 ? (present / total) * 100 : 0,
-      absentPercentage: total > 0 ? (absent / total) * 100 : 0,
-    };
-  }, [students]);
+  const { stats, isLoading, isError, refetch } = useAttendanceReport();
 
   if (isLoading) {
-    return <Skeleton className="h-64 w-full rounded" />;
+    return <AttendanceReportSkeleton />;
   }
 
   if (isError) {
@@ -50,43 +27,59 @@ export function AttendanceReport() {
     <div className="grid gap-4 md:grid-cols-4">
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-zinc-600">Total Students</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+            <CalendarCheck className="size-4 text-blue-600" />
+            Total Records
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-zinc-900">{stats.total}</div>
-          <p className="text-xs text-zinc-500 mt-1">Registered</p>
+          <div className="text-2xl font-bold text-zinc-900">{stats.totalRecords}</div>
+          <p className="mt-1 text-xs text-zinc-500">Attendance entries</p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-zinc-600">Present</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+            <UserCheck className="size-4 text-emerald-600" />
+            Present
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-green-600">{stats.present}</div>
-          <p className="text-xs text-zinc-500 mt-1">{stats.presentPercentage.toFixed(1)}%</p>
+          <div className="text-2xl font-bold text-emerald-600">{stats.present}</div>
+          <p className="mt-1 text-xs text-zinc-500">
+            {stats.presentPercentage.toFixed(1)}%
+          </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-zinc-600">Absent</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+            <UserX className="size-4 text-red-600" />
+            Absent
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-red-600">{stats.absent}</div>
-          <p className="text-xs text-zinc-500 mt-1">{stats.absentPercentage.toFixed(1)}%</p>
+          <p className="mt-1 text-xs text-zinc-500">
+            {stats.absentPercentage.toFixed(1)}%
+          </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-zinc-600">Attendance Rate</CardTitle>
+          <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
+            <Clock className="size-4 text-amber-600" />
+            Late
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-blue-600">
-            {stats.presentPercentage.toFixed(1)}%
-          </div>
-          <p className="text-xs text-zinc-500 mt-1">Overall</p>
+          <div className="text-2xl font-bold text-amber-600">{stats.late}</div>
+          <p className="mt-1 text-xs text-zinc-500">
+            {stats.latePercentage.toFixed(1)}%
+          </p>
         </CardContent>
       </Card>
     </div>
