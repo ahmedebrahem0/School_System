@@ -45,12 +45,12 @@ export default function TimetablesPage() {
   const { data: timeSlots = [] } = useGetTimeSlotsQuery();
 
   const classesMap = useMemo(
-    () => Object.fromEntries(classes.map((c) => [c.id, c.className])),
+    () => Object.fromEntries(classes.map((c) => [c.classId, c.className])),
     [classes]
   );
 
   const subjectsMap = useMemo(
-    () => Object.fromEntries(subjects.map((s) => [s.id, s.subjectName])),
+    () => Object.fromEntries(subjects.map((s) => [s.subjectId, s.subjectName])),
     [subjects]
   );
 
