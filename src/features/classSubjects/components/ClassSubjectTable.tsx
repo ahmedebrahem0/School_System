@@ -56,7 +56,9 @@ export function ClassSubjectTable({ classId, subjectsMap = {} }: ClassSubjectTab
                 className="border-b border-zinc-100 transition-colors hover:bg-zinc-50"
               >
                 <td className="px-6 py-4 text-[14px] font-medium text-zinc-900">
-                  {subjectsMap[subject.subjectId] || `Subject ${subject.subjectId}`}
+                  {subject.subjectName ||
+                    subjectsMap[subject.subjectId] ||
+                    `Subject ${subject.subjectId}`}
                 </td>
                 <td className="px-6 py-4">
                   <button
