@@ -14,7 +14,10 @@ export const timeSlotsApi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "TimeSlot" as const, id })),
+              ...result.map(({ timeSlotId }) => ({
+                type: "TimeSlot" as const,
+                id: timeSlotId,
+              })),
               { type: "TimeSlot" as const, id: "LIST" },
             ]
           : [{ type: "TimeSlot" as const, id: "LIST" }],
