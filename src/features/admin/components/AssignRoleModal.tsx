@@ -46,7 +46,7 @@ export function AssignRoleModal({
 }: AssignRoleModalProps) {
   const { assign, isAssigning } = useAssignRole();
   const availableRoles = useMemo(
-    () => ALL_ROLES.filter((role) => !user?.roles.includes(role)),
+    () => ALL_ROLES.filter((role) => !(user?.roles ?? []).includes(role)),
     [user?.roles]
   );
 
