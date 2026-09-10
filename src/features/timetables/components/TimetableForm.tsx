@@ -91,7 +91,7 @@ export function TimetableForm({
     }
 
     if (timetable) {
-      await update(timetable.id, data, {
+      await update(timetable.timetableId, data, {
         onSuccess: () => {
           onOpenChange(false);
           form.reset();
