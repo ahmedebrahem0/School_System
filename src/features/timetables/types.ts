@@ -1,10 +1,15 @@
 export interface Timetable {
-  id: number;
+  timetableId: number;
   classId: number;
+  className?: string | null;
   subjectId: number;
+  subjectName?: string | null;
   dayOfWeek: string;
   timeSlotId: number;
+  startTime?: string | null;
+  endTime?: string | null;
   classroomId: number;
+  roomNumber?: string | null;
 }
 
 export interface CreateTimetableDto {
