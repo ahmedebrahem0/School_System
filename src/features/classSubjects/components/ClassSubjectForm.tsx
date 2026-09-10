@@ -91,8 +91,8 @@ export function ClassSubjectForm({
                       <SelectContent>
                         {subjects.map((subject) => (
                           <SelectItem
-                            key={subject.id}
-                            value={subject.id.toString()}
+                            key={subject.subjectId}
+                            value={subject.subjectId.toString()}
                           >
                             {subject.subjectName}
                           </SelectItem>
