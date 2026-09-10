@@ -3,8 +3,9 @@
 import { ShieldMinus, ShieldPlus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { Button } from "@/components/ui/button";
-import type { Role } from "@/constants/roles";
+import { ROLES, type Role } from "@/constants/roles";
 import { useAssignRole } from "../hooks/useAssignRole";
 import type { AdminUser } from "../types";
 import { AssignRoleModal } from "./AssignRoleModal";
@@ -15,6 +16,7 @@ interface AdminUserTableProps {
 }
 
 export function AdminUserTable({ users }: AdminUserTableProps) {
+  const { user: currentUser } = useAuth();
   const { remove, deleteUser, isRemoving, isDeleting } = useAssignRole();
   const [assignUser, setAssignUser] = useState<AdminUser>();
   const [removeConfirm, setRemoveConfirm] = useState<{
@@ -76,6 +78,7 @@ export function AdminUserTable({ users }: AdminUserTableProps) {
             {users.map((user) => {
               const displayName = user.fullName || user.userName;
               const roles = user.roles ?? [];
+              const isCurrentUser = currentUser?.id === user.id;
 
               return (
                 <tr
@@ -114,9 +117,16 @@ export function AdminUserTable({ users }: AdminUserTableProps) {
                               onClick={() =>
                                 setRemoveConfirm({ isOpen: true, user, role })
                               }
-                              disabled={isRemoving}
+                              disabled={
+                                isRemoving ||
+                                (isCurrentUser && role === ROLES.ADMIN)
+                              }
                               className="rounded-full p-1 text-zinc-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
-                              title={`Remove ${role}`}
+                              title={
+                                isCurrentUser && role === ROLES.ADMIN
+                                  ? "You cannot remove your own admin role"
+                                  : `Remove ${role}`
+                              }
                             >
                               <ShieldMinus className="h-3.5 w-3.5" />
                             </button>
@@ -139,9 +149,13 @@ export function AdminUserTable({ users }: AdminUserTableProps) {
                       <button
                         type="button"
                         onClick={() => setDeleteConfirm({ isOpen: true, user })}
-                        disabled={isDeleting}
+                        disabled={isDeleting || isCurrentUser}
                         className="rounded-lg p-2 text-red-600 hover:bg-red-50 disabled:opacity-50"
-                        title="Delete user"
+                        title={
+                          isCurrentUser
+                            ? "You cannot delete your own account"
+                            : "Delete user"
+                        }
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
