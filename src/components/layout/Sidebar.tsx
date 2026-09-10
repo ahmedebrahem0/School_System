@@ -184,7 +184,7 @@ const Sidebar = () => {
           NAVIGATION
           Scrollable if content is too long
           ───────────────────────────────────────────── */}
-      <nav className="flex-1 overflow-y-auto py-3 scrollbar-none">
+      <nav className="flex-1 overflow-y-auto py-3 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {navSections.map((section) => (
           <div key={section.label}>
 
