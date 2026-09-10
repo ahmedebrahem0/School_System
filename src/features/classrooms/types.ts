@@ -1,5 +1,5 @@
 export interface Classroom {
-  id: number;
+  classroomId: number;
   roomNumber: string;
   capacity: number;
 }
