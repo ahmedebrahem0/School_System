@@ -30,7 +30,7 @@ export function TeacherDashboard() {
         stats={[
           { label: "Classes", value: stats.classes, icon: Users, iconBg: "#CCFBF1", iconColor: "#0F766E" },
           { label: "Subjects", value: stats.subjects, icon: BookOpen, iconBg: "#FEF3C7", iconColor: "#B45309" },
-          { label: "Students", value: stats.students, icon: Users, iconBg: "#DBEAFE", iconColor: "#2563EB" },
+          { label: "Grade Records", value: stats.gradeRecords, icon: Users, iconBg: "#DBEAFE", iconColor: "#2563EB" },
           { label: "Average Grade", value: stats.avgGrade.toFixed(1), icon: TrendingUp, iconBg: "#D1FAE5", iconColor: "#065F46" },
         ]}
       />
@@ -48,9 +48,9 @@ export function TeacherDashboard() {
         title="Teaching Overview"
         description="Your teaching load and classroom records"
         items={[
-          { label: "Average Class Size", value: stats.classes > 0 ? (stats.students / stats.classes).toFixed(1) : "N/A", tone: "teal" },
+          { label: "Assigned Classes", value: stats.classes, tone: "teal" },
           { label: "Grade Records", value: stats.avgGrade > 0 ? `${stats.avgGrade.toFixed(1)}/100` : "N/A", tone: "emerald" },
-          { label: "Attendance Records", value: stats.attendanceRecords, tone: "blue" },
+          { label: "Recorded Grades", value: stats.gradeRecords, tone: "blue" },
           { label: "Subjects", value: stats.subjects, tone: "amber" },
         ]}
       />
