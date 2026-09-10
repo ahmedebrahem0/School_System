@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { Suspense } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -23,6 +24,14 @@ import { ROUTES } from "@/constants/routes"
 import type { StudentDetails } from "@/features/students/types"
 
 export default function StudentDetailPage() {
+  return (
+    <Suspense fallback={<StudentCardSkeleton />}>
+      <StudentDetailContent />
+    </Suspense>
+  )
+}
+
+function StudentDetailContent() {
   const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const searchParams = useSearchParams()
