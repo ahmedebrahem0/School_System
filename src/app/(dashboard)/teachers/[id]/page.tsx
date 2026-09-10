@@ -5,7 +5,7 @@
 import { useParams, useSearchParams } from "next/navigation";
 import { ArrowLeft, Edit2, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/common/PageHeader";
 import Loader from "@/components/common/Loader";
@@ -16,6 +16,14 @@ import { useTeacher } from "@/features/teachers/hooks/useTeacher";
 import { ROUTES } from "@/constants/routes";
 
 export default function TeacherDetailPage() {
+  return (
+    <Suspense fallback={<Loader />}>
+      <TeacherDetailContent />
+    </Suspense>
+  );
+}
+
+function TeacherDetailContent() {
   const params = useParams<{ id: string }>();
   const teacherId = Number(params.id);
   const searchParams = useSearchParams();
