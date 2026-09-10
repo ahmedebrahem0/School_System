@@ -5,7 +5,7 @@
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Edit2, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/common/PageHeader";
 import Loader from "@/components/common/Loader";
@@ -19,7 +19,15 @@ interface ClassDetailPageProps {
   params: { id: string };
 }
 
-export default function ClassDetailPage({ params }: ClassDetailPageProps) {
+export default function ClassDetailPage(props: ClassDetailPageProps) {
+  return (
+    <Suspense fallback={<Loader />}>
+      <ClassDetailContent {...props} />
+    </Suspense>
+  );
+}
+
+function ClassDetailContent({ params }: ClassDetailPageProps) {
   const classId = Number(params.id);
   const searchParams = useSearchParams();
   const isEditMode = searchParams.get("edit") === "";
