@@ -3,10 +3,11 @@ import { ATTENDANCE_STATUS } from "@/constants/attendance-status";
 import { ROLES } from "@/constants/roles";
 import {
   useGetAdminUsersQuery,
-  useGetAttendancesQuery,
   useGetClassesQuery,
   useGetGradesQuery,
   useGetMyGradesQuery,
+  useGetMyTeacherClassesQuery,
+  useGetMyTeacherSubjectsQuery,
   useGetStudentAttendanceQuery,
   useGetStudentsQuery,
   useGetSubjectsQuery,
@@ -68,15 +69,13 @@ export function useAdminDashboardStats() {
 }
 
 export function useTeacherDashboardStats() {
-  const classesQuery = useGetClassesQuery();
-  const subjectsQuery = useGetSubjectsQuery();
+  const classesQuery = useGetMyTeacherClassesQuery();
+  const subjectsQuery = useGetMyTeacherSubjectsQuery();
   const gradesQuery = useGetGradesQuery();
-  const attendancesQuery = useGetAttendancesQuery();
 
   const stats = useMemo(() => {
     const classes = classesQuery.data ?? [];
     const grades = gradesQuery.data ?? [];
-    const attendances = attendancesQuery.data ?? [];
     const gradeAverage =
       grades.length > 0
         ? grades.reduce((total, item) => total + item.grade, 0) / grades.length
@@ -85,29 +84,26 @@ export function useTeacherDashboardStats() {
     return {
       classes: classes.length,
       subjects: subjectsQuery.data?.length ?? 0,
-      students: classes.reduce((sum, item) => sum + (item.students?.length ?? 0), 0),
+      students: 0,
       avgGrade: gradeAverage,
-      attendanceRecords: attendances.length,
+      gradeRecords: grades.length,
     };
-  }, [attendancesQuery.data, classesQuery.data, gradesQuery.data, subjectsQuery.data]);
+  }, [classesQuery.data, gradesQuery.data, subjectsQuery.data]);
 
   return {
     stats,
     isLoading:
       classesQuery.isLoading ||
       subjectsQuery.isLoading ||
-      gradesQuery.isLoading ||
-      attendancesQuery.isLoading,
+      gradesQuery.isLoading,
     isError:
       classesQuery.isError ||
       subjectsQuery.isError ||
-      gradesQuery.isError ||
-      attendancesQuery.isError,
+      gradesQuery.isError,
     refetch: () => {
       classesQuery.refetch();
       subjectsQuery.refetch();
       gradesQuery.refetch();
-      attendancesQuery.refetch();
     },
   };
 }
