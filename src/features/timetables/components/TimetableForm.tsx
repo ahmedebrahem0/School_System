@@ -226,7 +226,10 @@ export function TimetableForm({
                       </SelectTrigger>
                       <SelectContent>
                         {timeSlots.map((slot) => (
-                          <SelectItem key={slot.id} value={slot.id.toString()}>
+                          <SelectItem
+                            key={slot.timeSlotId}
+                            value={slot.timeSlotId.toString()}
+                          >
                             {slot.startTime} - {slot.endTime}
                           </SelectItem>
                         ))}
@@ -255,7 +258,10 @@ export function TimetableForm({
                       </SelectTrigger>
                       <SelectContent>
                         {classrooms.map((room) => (
-                          <SelectItem key={room.id} value={room.id.toString()}>
+                          <SelectItem
+                            key={room.classroomId}
+                            value={room.classroomId.toString()}
+                          >
                             {room.roomNumber} (Cap: {room.capacity})
                           </SelectItem>
                         ))}
