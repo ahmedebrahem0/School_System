@@ -217,20 +217,24 @@ const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-3 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {navSections.map((section) => (
-            <div key={section.label}>
-              <p className="px-6 pt-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40">
-                {section.label}
-              </p>
-              {section.items.map((item) => (
-                <div key={item.href} onClick={onClose}>
-                  <SidebarItem {...item} />
-                </div>
-              ))}
-            </div>
-          ))}
-        </nav>
+        <div className="relative flex-1 min-h-0">
+          <nav className="h-full overflow-y-auto py-3 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {navSections.map((section) => (
+              <div key={section.label}>
+                <p className="px-6 pt-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40">
+                  {section.label}
+                </p>
+                {section.items.map((item) => (
+                  <div key={item.href} onClick={onClose}>
+                    <SidebarItem {...item} />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </nav>
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-5 bg-gradient-to-b from-[#1E3A8A] to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#1E3A8A] to-transparent" />
+        </div>
 
         {/* Logout */}
         <div className="px-4 py-4 border-t border-white/10 shrink-0">
