@@ -59,7 +59,7 @@ export function TimeSlotForm({
     }
 
     if (timeSlot) {
-      await update(timeSlot.id, data, {
+      await update(timeSlot.timeSlotId, data, {
         onSuccess: () => {
           onOpenChange(false);
           form.reset();
