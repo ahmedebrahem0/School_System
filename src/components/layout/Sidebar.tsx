@@ -126,6 +126,7 @@ const Sidebar = () => {
 
   // Falls back to an empty navigation list when a role has no configured links yet.
   const navSections = NAV_CONFIG[user.role] ?? [];
+  // Role metadata controls the readable label shown in the profile badge.
   const roleMeta = ROLE_META[user.role];
   const initials = getInitials(user.fullName);
 
