@@ -7,7 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { AvatarWithInitials } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useMyGrades } from "@/features/grades/hooks/useMyGrades"
 import { useMyProfile } from "../hooks/useMyProfile"
+import { useStudentAttendance } from "../hooks/useStudentAttendance"
 import { formatDateShort } from "@/lib/utils/formatters"
 
 function ProfileSkeleton() {
@@ -26,6 +28,24 @@ function ProfileSkeleton() {
 
 export function MyProfilePage() {
   const { student, isLoading, isError, refetch } = useMyProfile()
+  const {
+    records: attendanceRecords,
+    isLoading: isAttendanceLoading,
+    isError: isAttendanceError,
+    refetch: refetchAttendance,
+  } = useStudentAttendance()
+  const {
+    grades,
+    isLoading: isGradesLoading,
+    isError: isGradesError,
+    refetch: refetchGrades,
+  } = useMyGrades()
+
+  const refetchProfileData = () => {
+    refetch()
+    refetchAttendance()
+    refetchGrades()
+  }
 
   if (isLoading) {
     return <ProfileSkeleton />
@@ -36,7 +56,7 @@ export function MyProfilePage() {
       <ErrorMessage
         title="Failed to load your profile"
         description="Your student profile could not be fetched right now."
-        onRetry={refetch}
+        onRetry={refetchProfileData}
       />
     )
   }
@@ -46,8 +66,8 @@ export function MyProfilePage() {
     student.class?.className ??
     (student.classId ? `Class ${student.classId}` : "Unassigned")
   const birthDate = student.dateOfBirth ? formatDateShort(student.dateOfBirth) : "N/A"
-  const attendanceCount = student.attendances?.length ?? 0
-  const gradesCount = student.grades?.length ?? 0
+  const attendanceCount = attendanceRecords.length
+  const gradesCount = grades.length
 
   return (
     <div className="space-y-6">
@@ -101,7 +121,7 @@ export function MyProfilePage() {
             <div>
               <p className="text-[12px] text-zinc-500">Attendance records</p>
               <p className="font-mono text-[18px] font-[700] text-zinc-950">
-                {attendanceCount}
+                {isAttendanceLoading ? "..." : isAttendanceError ? "N/A" : attendanceCount}
               </p>
             </div>
           </CardContent>
@@ -114,7 +134,7 @@ export function MyProfilePage() {
             <div>
               <p className="text-[12px] text-zinc-500">Grade entries</p>
               <p className="font-mono text-[18px] font-[700] text-zinc-950">
-                {gradesCount}
+                {isGradesLoading ? "..." : isGradesError ? "N/A" : gradesCount}
               </p>
             </div>
           </CardContent>
