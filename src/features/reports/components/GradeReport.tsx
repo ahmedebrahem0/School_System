@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import { useGradeReport } from "../hooks/useReports";
 import { GradeReportSkeleton } from "./GradeReport.skeleton";
+import { GradeBySubjectChart } from "./GradeBySubjectChart";
 
 export function GradeReport() {
   const { stats, isLoading, isError, refetch } = useGradeReport();
@@ -24,7 +25,8 @@ export function GradeReport() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+    <div className="space-y-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
@@ -93,6 +95,9 @@ export function GradeReport() {
           <p className="mt-1 text-xs text-zinc-500">Needs follow-up</p>
         </CardContent>
       </Card>
+      </div>
+
+      <GradeBySubjectChart data={stats.bySubject} />
     </div>
   );
 }

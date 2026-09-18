@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import { useAttendanceReport } from "../hooks/useReports";
 import { AttendanceReportSkeleton } from "./AttendanceReport.skeleton";
+import { AttendanceStatusChart } from "./AttendanceStatusChart";
 
 export function AttendanceReport() {
   const { stats, isLoading, isError, refetch } = useAttendanceReport();
@@ -24,7 +25,8 @@ export function AttendanceReport() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-4">
+    <div className="space-y-4">
+      <div className="grid gap-4 md:grid-cols-4">
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-medium text-zinc-600">
@@ -82,6 +84,9 @@ export function AttendanceReport() {
           </p>
         </CardContent>
       </Card>
+      </div>
+
+      <AttendanceStatusChart stats={stats} />
     </div>
   );
 }

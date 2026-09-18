@@ -1,3 +1,8 @@
+export interface SubjectAverage {
+  subjectName: string;
+  average: number;
+}
+
 export interface GradeReportStats {
   totalGrades: number;
   averageGrade: number;
@@ -5,6 +10,7 @@ export interface GradeReportStats {
   lowestGrade: number;
   passingRate: number;
   topPerformer: string;
+  bySubject: SubjectAverage[];
 }
 
 export interface AttendanceReportStats {

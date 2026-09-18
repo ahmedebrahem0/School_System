@@ -19,6 +19,7 @@ export function useGradeReport() {
         lowestGrade: 0,
         passingRate: 0,
         topPerformer: "N/A",
+        bySubject: [],
       };
     }
 
@@ -28,6 +29,20 @@ export function useGradeReport() {
     const topGrade = grades.find((item) => item.grade === highestGrade);
     const passingCount = grades.filter((item) => item.grade >= 60).length;
 
+    const subjectTotals = new Map<string, { total: number; count: number }>();
+    for (const item of grades) {
+      const entry = subjectTotals.get(item.subjectName) ?? { total: 0, count: 0 };
+      entry.total += item.grade;
+      entry.count += 1;
+      subjectTotals.set(item.subjectName, entry);
+    }
+    const bySubject = Array.from(subjectTotals.entries()).map(
+      ([subjectName, { total, count }]) => ({
+        subjectName,
+        average: total / count,
+      })
+    );
+
     return {
       totalGrades,
       averageGrade:
@@ -36,6 +51,7 @@ export function useGradeReport() {
       lowestGrade,
       passingRate: (passingCount / totalGrades) * 100,
       topPerformer: topGrade?.studentName ?? "N/A",
+      bySubject,
     };
   }, [query.data]);
 
