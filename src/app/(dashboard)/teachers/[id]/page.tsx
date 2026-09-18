@@ -3,7 +3,7 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import { ArrowLeft, Edit2, X } from "lucide-react";
+import { ArrowLeft, Edit2, Plus, X } from "lucide-react";
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,8 @@ import ErrorMessage from "@/components/common/ErrorMessage";
 import EmptyState from "@/components/common/EmptyState";
 import { TeacherForm } from "@/features/teachers/components/TeacherForm";
 import { useTeacher } from "@/features/teachers/hooks/useTeacher";
+import { TeacherSubjectForm } from "@/features/teacherSubjects/components/TeacherSubjectForm";
+import { TeacherClassForm } from "@/features/teacherClasses/components/TeacherClassForm";
 import { ROUTES } from "@/constants/routes";
 
 export default function TeacherDetailPage() {
@@ -29,6 +31,8 @@ function TeacherDetailContent() {
   const searchParams = useSearchParams();
   const isEditMode = searchParams.get("edit") === "";
   const [showEditForm, setShowEditForm] = useState(isEditMode);
+  const [showSubjectForm, setShowSubjectForm] = useState(false);
+  const [showClassForm, setShowClassForm] = useState(false);
 
   const { teacher, isLoading, isError, refetch } = useTeacher(teacherId);
 
@@ -138,9 +142,20 @@ function TeacherDetailContent() {
             </div>
           </div>
 
-          {teacher.subjects.length > 0 && (
-            <div className="space-y-4 rounded-lg border border-zinc-200 bg-white p-6">
+          <div className="space-y-4 rounded-lg border border-zinc-200 bg-white p-6">
+            <div className="flex items-center justify-between">
               <h3 className="font-semibold text-zinc-900">Subjects</h3>
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2"
+                onClick={() => setShowSubjectForm(true)}
+              >
+                <Plus className="h-4 w-4" />
+                Assign Subject
+              </Button>
+            </div>
+            {teacher.subjects.length > 0 ? (
               <div className="space-y-2">
                 {teacher.subjects.map((subject) => (
                   <div
@@ -151,12 +166,27 @@ function TeacherDetailContent() {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="text-[14px] text-zinc-500">
+                No subjects assigned yet.
+              </p>
+            )}
+          </div>
 
-          {teacher.classes.length > 0 && (
-            <div className="space-y-4 rounded-lg border border-zinc-200 bg-white p-6">
+          <div className="space-y-4 rounded-lg border border-zinc-200 bg-white p-6">
+            <div className="flex items-center justify-between">
               <h3 className="font-semibold text-zinc-900">Classes</h3>
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-2"
+                onClick={() => setShowClassForm(true)}
+              >
+                <Plus className="h-4 w-4" />
+                Assign Class
+              </Button>
+            </div>
+            {teacher.classes.length > 0 ? (
               <div className="space-y-2">
                 {teacher.classes.map((cls) => (
                   <div
@@ -167,10 +197,25 @@ function TeacherDetailContent() {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className="text-[14px] text-zinc-500">
+                No classes assigned yet.
+              </p>
+            )}
+          </div>
         </div>
       )}
+
+      <TeacherSubjectForm
+        teacherId={teacherId}
+        open={showSubjectForm}
+        onOpenChange={setShowSubjectForm}
+      />
+      <TeacherClassForm
+        teacherId={teacherId}
+        open={showClassForm}
+        onOpenChange={setShowClassForm}
+      />
     </div>
   );
 }
