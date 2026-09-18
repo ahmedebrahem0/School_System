@@ -53,9 +53,10 @@ export const teacherSubjectsApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: [
+      invalidatesTags: (_, __, { teacherId }) => [
         { type: "TeacherSubject" as const, id: "LIST" },
         { type: "Teacher" as const, id: "LIST" },
+        { type: "Teacher" as const, id: teacherId },
         { type: "Subject" as const, id: "LIST" },
       ],
     }),
@@ -70,6 +71,7 @@ export const teacherSubjectsApi = baseApi.injectEndpoints({
         { type: "TeacherSubject" as const, id: "LIST" },
         { type: "TeacherSubject" as const, id: `TEACHER_${teacherId}` },
         { type: "TeacherSubject" as const, id: `SUBJECT_${subjectId}` },
+        { type: "Teacher" as const, id: teacherId },
       ],
     }),
   }),
