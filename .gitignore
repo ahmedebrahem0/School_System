@@ -43,3 +43,6 @@ next-env.d.ts
 # AI / agents docs
 AGENTS.md
 CLAUDE.md
+
+# local test credentials
+test-accounts.local.md
