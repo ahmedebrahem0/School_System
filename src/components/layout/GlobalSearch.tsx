@@ -88,7 +88,7 @@ const GlobalSearch = () => {
         onFocus={() => setIsOpen(true)}
         placeholder="Search students, teachers..."
         className={cn(
-          "w-[320px] h-9 pl-10 pr-4",
+          "w-[320px] h-9 pl-10 pr-14",
           "bg-zinc-100 border border-zinc-200 rounded-full",
           "text-[13px] text-zinc-700 placeholder:text-zinc-400",
           "focus:outline-none focus:ring-2 focus:ring-blue-500/20",
@@ -96,6 +96,9 @@ const GlobalSearch = () => {
           "transition-all duration-200"
         )}
       />
+      <kbd className="hidden sm:inline-flex items-center gap-0.5 absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded-[4px] border border-zinc-300 bg-white text-[10px] text-zinc-400 pointer-events-none">
+        Ctrl K
+      </kbd>
 
       {showDropdown && (
         <div
