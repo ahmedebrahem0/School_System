@@ -37,6 +37,7 @@ export function AdminDashboard() {
           { label: "Teachers", value: stats.teachers, icon: BookOpen, iconBg: "#CCFBF1", iconColor: "#0F766E" },
           { label: "Students", value: stats.students, icon: GraduationCap, iconBg: "#DBEAFE", iconColor: "#2563EB" },
         ]}
+        startIndex={0}
       />
 
       <StatsGrid
@@ -46,6 +47,7 @@ export function AdminDashboard() {
           { label: "Subjects", value: stats.subjects, icon: BookOpen, iconBg: "#FEF3C7", iconColor: "#B45309" },
           { label: "Pending Roles", value: stats.pending, icon: BarChart3, iconBg: "#FECACA", iconColor: "#991B1B" },
         ]}
+        startIndex={4}
       />
 
       <QuickActions
@@ -55,6 +57,7 @@ export function AdminDashboard() {
           { label: "Assign Roles", href: ROUTES.ADMIN.ROLES, icon: ShieldCheck },
           { label: "View Reports", href: ROUTES.REPORTS, icon: BarChart3 },
         ]}
+        startIndex={7}
       />
 
       <RecentActivity
@@ -70,6 +73,7 @@ export function AdminDashboard() {
             tone: "emerald",
           },
         ]}
+        startIndex={10}
       />
     </div>
   );

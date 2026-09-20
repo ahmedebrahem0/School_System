@@ -33,6 +33,7 @@ export function StudentDashboard() {
           { label: "Timetable Items", value: stats.timetableItems, icon: BookOpen, iconBg: "#FEF3C7", iconColor: "#B45309" },
           { label: "Grade Records", value: stats.totalGrades, icon: Award, iconBg: "#E0E7FF", iconColor: "#4338CA" },
         ]}
+        startIndex={0}
       />
 
       <QuickActions
@@ -42,6 +43,7 @@ export function StudentDashboard() {
           { label: "My Attendance", href: ROUTES.STUDENT.MY_ATTENDANCE, icon: Calendar },
           { label: "My Profile", href: ROUTES.STUDENT.MY_PROFILE, icon: Award },
         ]}
+        startIndex={4}
       />
 
       <RecentActivity
@@ -53,6 +55,7 @@ export function StudentDashboard() {
           { label: "Timetable Items", value: stats.timetableItems, tone: "amber" },
           { label: "Grade Records", value: stats.totalGrades, tone: "indigo" },
         ]}
+        startIndex={7}
       />
     </div>
   );

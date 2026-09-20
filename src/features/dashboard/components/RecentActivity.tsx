@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { StaggerItem } from "@/components/common/StaggerItem";
 import { cn } from "@/lib/utils/cn";
 import type { ActivityItem } from "../types";
 
@@ -15,9 +16,10 @@ interface RecentActivityProps {
   title: string;
   description: string;
   items: ActivityItem[];
+  startIndex?: number;
 }
 
-export function RecentActivity({ title, description, items }: RecentActivityProps) {
+export function RecentActivity({ title, description, items, startIndex = 0 }: RecentActivityProps) {
   return (
     <Card className="border-zinc-200">
       <CardHeader>
@@ -28,16 +30,15 @@ export function RecentActivity({ title, description, items }: RecentActivityProp
       </CardHeader>
       <CardContent>
         <div className="grid gap-4 md:grid-cols-2">
-          {items.map((item) => (
-            <div
-              key={item.label}
-              className="flex items-center justify-between rounded-[8px] border border-zinc-200 p-4 text-sm"
-            >
-              <span className="text-zinc-600">{item.label}</span>
-              <span className={cn("font-semibold text-zinc-900", item.tone && toneClass[item.tone])}>
-                {item.value}
-              </span>
-            </div>
+          {items.map((item, i) => (
+            <StaggerItem key={item.label} index={startIndex + i}>
+              <div className="flex items-center justify-between rounded-[8px] border border-zinc-200 p-4 text-sm">
+                <span className="text-zinc-600">{item.label}</span>
+                <span className={cn("font-semibold text-zinc-900", item.tone && toneClass[item.tone])}>
+                  {item.value}
+                </span>
+              </div>
+            </StaggerItem>
           ))}
         </div>
       </CardContent>

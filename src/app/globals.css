@@ -33,3 +33,27 @@ body {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* Staggered entrance — used by StaggerItem to make dashboard cards,
+   quick-action buttons, and activity rows settle into place one after
+   another instead of popping in all at once. */
+@keyframes stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-stagger-in {
+  animation: stagger-in 0.4s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-stagger-in {
+    animation: none;
+  }
+}

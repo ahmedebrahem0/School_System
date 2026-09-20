@@ -33,6 +33,7 @@ export function TeacherDashboard() {
           { label: "Grade Records", value: stats.gradeRecords, icon: Users, iconBg: "#DBEAFE", iconColor: "#2563EB" },
           { label: "Average Grade", value: stats.avgGrade.toFixed(1), icon: TrendingUp, iconBg: "#D1FAE5", iconColor: "#065F46" },
         ]}
+        startIndex={0}
       />
 
       <QuickActions
@@ -42,6 +43,7 @@ export function TeacherDashboard() {
           { label: "Record Grades", href: ROUTES.TEACHER.GRADES, icon: TrendingUp },
           { label: "Mark Attendance", href: ROUTES.TEACHER.ATTENDANCES, icon: CalendarCheck },
         ]}
+        startIndex={4}
       />
 
       <RecentActivity
@@ -53,6 +55,7 @@ export function TeacherDashboard() {
           { label: "Recorded Grades", value: stats.gradeRecords, tone: "blue" },
           { label: "Subjects", value: stats.subjects, tone: "amber" },
         ]}
+        startIndex={7}
       />
     </div>
   );
