@@ -6,9 +6,10 @@
 "use client";
 
 import { useState } from "react";
-import { LogOut, ChevronDown, Menu } from "lucide-react";
+import { LogOut, ChevronDown, Menu, Moon, Sun } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useSidebar } from "@/components/providers/SidebarProvider";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { getInitials } from "@/lib/utils/formatters";
 import { ROLE_META } from "@/constants/roles";
@@ -34,6 +35,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
   const { user } = useAuth();
   const { logout } = useLogout();
   const { isCollapsed } = useSidebar();
+  const { theme, toggle: toggleTheme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   if (!user) return null;
@@ -44,7 +46,8 @@ const Header = ({ onMenuClick }: HeaderProps) => {
   return (
     <header
       className={cn(
-        "fixed top-0 right-0 left-0 h-16 bg-white border-b border-zinc-200 z-30",
+        "fixed top-0 right-0 left-0 h-16 z-30",
+        "bg-white dark:bg-[#111827] border-b border-zinc-200 dark:border-white/10",
         "transition-[left] duration-200 ease-in-out",
         isCollapsed ? "lg:left-[76px]" : "lg:left-[260px]"
       )}
@@ -59,7 +62,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
           {/* Mobile hamburger menu */}
           <button
             onClick={onMenuClick}
-            className="lg:hidden p-2 rounded-lg text-zinc-500 hover:bg-zinc-100 transition-colors"
+            className="lg:hidden p-2 rounded-lg text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -87,7 +90,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
             <button
               className={cn(
                 "flex items-center gap-2.5 px-2 py-1.5 rounded-lg",
-                "hover:bg-zinc-100 transition-colors duration-150",
+                "hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors duration-150",
                 "outline-none"
               )}
             >
@@ -98,10 +101,10 @@ const Header = ({ onMenuClick }: HeaderProps) => {
 
               {/* Name + Role — hidden on mobile */}
               <div className="hidden sm:block text-left">
-                <p className="text-[13px] font-medium text-zinc-800 leading-none">
+                <p className="text-[13px] font-medium text-zinc-800 dark:text-zinc-100 leading-none">
                   {user.fullName}
                 </p>
-                <p className="text-[11px] text-zinc-500 mt-0.5">
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
                   {roleMeta.label}
                 </p>
               </div>
@@ -113,13 +116,16 @@ const Header = ({ onMenuClick }: HeaderProps) => {
             </button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-[220px] p-0 overflow-hidden">
+          <DropdownMenuContent
+            align="end"
+            className="w-[220px] p-0 overflow-hidden dark:bg-[#111827] dark:border-white/10"
+          >
             {/* User Info */}
-            <div className="px-4 py-3 border-b border-zinc-100">
-              <p className="text-[13px] font-medium text-zinc-800 truncate">
+            <div className="px-4 py-3 border-b border-zinc-100 dark:border-white/10">
+              <p className="text-[13px] font-medium text-zinc-800 dark:text-zinc-100 truncate">
                 {user.fullName}
               </p>
-              <p className="text-[12px] text-zinc-500 truncate mt-0.5">
+              <p className="text-[12px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
                 {user.email}
               </p>
               {/* Role Badge */}
@@ -130,6 +136,21 @@ const Header = ({ onMenuClick }: HeaderProps) => {
               )}>
                 {roleMeta.label}
               </span>
+            </div>
+
+            {/* Theme Toggle */}
+            <div className="p-1.5 border-b border-zinc-100 dark:border-white/10">
+              <DropdownMenuItem
+                onClick={toggleTheme}
+                className="gap-2.5 px-3 py-2 dark:text-zinc-200 dark:focus:bg-white/10 dark:focus:text-white"
+              >
+                {theme === "dark" ? (
+                  <Sun className="w-4 h-4" />
+                ) : (
+                  <Moon className="w-4 h-4" />
+                )}
+                <span>{theme === "dark" ? "Light mode" : "Dark mode"}</span>
+              </DropdownMenuItem>
             </div>
 
             {/* Logout */}

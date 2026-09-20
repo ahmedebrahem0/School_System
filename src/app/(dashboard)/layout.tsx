@@ -12,6 +12,7 @@ import Header from "@/components/layout/Header";
 import MobileNav from "@/components/layout/MobileNav";
 import { CommandPalette } from "@/components/layout/CommandPalette";
 import { SidebarProvider, useSidebar } from "@/components/providers/SidebarProvider";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils/cn";
 
 const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => {
@@ -20,7 +21,7 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
   const { isCollapsed } = useSidebar();
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B1220]">
 
       {/* ─────────────────────────────────────────────
           SIDEBAR
@@ -71,9 +72,11 @@ const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => 
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <SidebarProvider>
-      <DashboardLayoutContent>{children}</DashboardLayoutContent>
-    </SidebarProvider>
+    <ThemeProvider>
+      <SidebarProvider>
+        <DashboardLayoutContent>{children}</DashboardLayoutContent>
+      </SidebarProvider>
+    </ThemeProvider>
   );
 };
 

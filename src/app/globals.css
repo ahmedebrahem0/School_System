@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 *,
 *::before,
 *::after {
@@ -16,6 +18,11 @@ body {
   min-height: 100vh;
   background: #f8fafc;
   color: #18181b;
+}
+
+.dark body {
+  background: #0b1220;
+  color: #e4e4e7;
 }
 
 .scrollbar-none {
