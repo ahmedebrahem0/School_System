@@ -3,25 +3,36 @@
 // Authentication layout — shared between login and register pages
 // Split screen design: decorative left panel + form right panel
 // No sidebar or header — clean focused experience
+//
+// On a successful login, AuthTransitionProvider drives an exit
+// animation: the left panel slides out to the left and the right
+// panel slides out to the right before the route actually changes.
 
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: {
-    default: "Auth | EduSystem",
-    template: "%s | EduSystem",
-  },
-};
+import {
+  AuthTransitionProvider,
+  useAuthTransition,
+} from "@/components/providers/AuthTransitionProvider";
+import { cn } from "@/lib/utils/cn";
 
-const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+const AuthLayoutContent = ({ children }: { children: React.ReactNode }) => {
+  const { isExiting } = useAuthTransition();
+
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex overflow-hidden">
 
       {/* ─────────────────────────────────────────────
           LEFT PANEL — Decorative
           Hidden on mobile, visible on lg screens
           ───────────────────────────────────────────── */}
-      <div className="hidden lg:flex lg:w-[45%] bg-[#1E3A8A] relative overflow-hidden flex-col justify-between p-12">
+      <div
+        className={cn(
+          "hidden lg:flex lg:w-[45%] bg-[#1E3A8A] relative overflow-hidden flex-col justify-between p-12",
+          "transition-all duration-500 ease-in-out",
+          isExiting && "-translate-x-full opacity-0"
+        )}
+      >
 
         {/* Background Pattern */}
         <div className="absolute inset-0 overflow-hidden">
@@ -116,13 +127,27 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           RIGHT PANEL — Form Area
           Full width on mobile, 55% on desktop
           ───────────────────────────────────────────── */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-white">
+      <div
+        className={cn(
+          "flex-1 flex items-center justify-center p-6 lg:p-12 bg-white",
+          "transition-all duration-500 ease-in-out",
+          isExiting && "translate-x-full opacity-0"
+        )}
+      >
         <div className="w-full max-w-[480px]">
           {children}
         </div>
       </div>
 
     </div>
+  );
+};
+
+const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <AuthTransitionProvider>
+      <AuthLayoutContent>{children}</AuthLayoutContent>
+    </AuthTransitionProvider>
   );
 };
 

@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useAuthTransition } from "@/components/providers/AuthTransitionProvider";
 import { ROUTES } from "@/constants/routes";
 import type { AuthUser } from "@/types/api.types";
 import type { LoginFormData } from "../types";
@@ -35,6 +36,7 @@ export const useLogin = (): UseLoginReturn => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { setUser } = useAuth();
+  const { triggerExit } = useAuthTransition();
   const [isLoading, setIsLoading] = useState(false);
 
   const login = async (data: LoginFormData): Promise<void> => {
@@ -63,12 +65,14 @@ export const useLogin = (): UseLoginReturn => {
       }
 
       setUser(result.user);
-
-      const callbackUrl = searchParams.get("callbackUrl");
-      router.push(callbackUrl || ROUTES.DASHBOARD);
-      router.refresh();
-
       toast.success(`Welcome back, ${result.user.fullName}!`);
+
+      // Play the split-panel exit animation, then navigate once it's done.
+      const callbackUrl = searchParams.get("callbackUrl");
+      triggerExit(() => {
+        router.push(callbackUrl || ROUTES.DASHBOARD);
+        router.refresh();
+      });
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
