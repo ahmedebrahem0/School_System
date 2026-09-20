@@ -8,6 +8,7 @@
 import { useState } from "react";
 import { LogOut, ChevronDown, Menu } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useSidebar } from "@/components/providers/SidebarProvider";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { getInitials } from "@/lib/utils/formatters";
 import { ROLE_META } from "@/constants/roles";
@@ -32,6 +33,7 @@ interface HeaderProps {
 const Header = ({ onMenuClick }: HeaderProps) => {
   const { user } = useAuth();
   const { logout } = useLogout();
+  const { isCollapsed } = useSidebar();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   if (!user) return null;
@@ -40,7 +42,13 @@ const Header = ({ onMenuClick }: HeaderProps) => {
   const roleMeta = ROLE_META[user.role];
 
   return (
-    <header className="fixed top-0 right-0 left-0 lg:left-[260px] h-16 bg-white border-b border-zinc-200 z-30">
+    <header
+      className={cn(
+        "fixed top-0 right-0 left-0 h-16 bg-white border-b border-zinc-200 z-30",
+        "transition-[left] duration-200 ease-in-out",
+        isCollapsed ? "lg:left-[76px]" : "lg:left-[260px]"
+      )}
+    >
       <div className="flex items-center justify-between h-full px-6">
 
         {/* ─────────────────────────────────────────

@@ -10,10 +10,13 @@ import { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 import MobileNav from "@/components/layout/MobileNav";
+import { SidebarProvider, useSidebar } from "@/components/providers/SidebarProvider";
+import { cn } from "@/lib/utils/cn";
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+const DashboardLayoutContent = ({ children }: { children: React.ReactNode }) => {
   // Controls mobile navigation drawer open/close
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const { isCollapsed } = useSidebar();
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -38,10 +41,15 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* ─────────────────────────────────────────────
           MAIN CONTENT AREA
-          ml-[260px] on desktop to account for sidebar
+          Margin tracks sidebar width so collapse animates smoothly
           Full width on mobile
           ───────────────────────────────────────────── */}
-      <div className="lg:ml-[260px]">
+      <div
+        className={cn(
+          "transition-[margin] duration-200 ease-in-out",
+          isCollapsed ? "lg:ml-[76px]" : "lg:ml-[260px]"
+        )}
+      >
 
         {/* Header — fixed top */}
         <Header onMenuClick={() => setIsMobileNavOpen(true)} />
@@ -55,6 +63,14 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
 
     </div>
+  );
+};
+
+const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <SidebarProvider>
+      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+    </SidebarProvider>
   );
 };
 

@@ -18,12 +18,13 @@ export interface SidebarItemProps {
   href: string;
   icon: LucideIcon;
   badge?: number; // Optional notification count
+  collapsed?: boolean;
 }
 
 // ─────────────────────────────────────────────────────
 // SIDEBAR ITEM COMPONENT
 // ─────────────────────────────────────────────────────
-const SidebarItem = ({ label, href, icon: Icon, badge }: SidebarItemProps) => {
+const SidebarItem = ({ label, href, icon: Icon, badge, collapsed }: SidebarItemProps) => {
   const pathname = usePathname();
 
   // Check if current route matches this item
@@ -34,10 +35,12 @@ const SidebarItem = ({ label, href, icon: Icon, badge }: SidebarItemProps) => {
   return (
     <Link
       href={href}
+      title={collapsed ? label : undefined}
       className={cn(
         // Base styles
         "flex items-center gap-3 px-3 py-2.5 rounded-lg mx-2 my-0.5",
         "text-[14px] transition-all duration-150",
+        collapsed && "justify-center",
 
         // Default state
         "text-white/65 hover:text-white/90 hover:bg-white/10",
@@ -45,7 +48,7 @@ const SidebarItem = ({ label, href, icon: Icon, badge }: SidebarItemProps) => {
         // Active state
         isActive && [
           "bg-white/15 text-white font-medium",
-          "border-l-[3px] border-white/60 rounded-l-none",
+          !collapsed && "border-l-[3px] border-white/60 rounded-l-none",
         ]
       )}
     >
@@ -57,14 +60,18 @@ const SidebarItem = ({ label, href, icon: Icon, badge }: SidebarItemProps) => {
         )}
       />
 
-      {/* Label */}
-      <span className="flex-1 truncate">{label}</span>
+      {!collapsed && (
+        <>
+          {/* Label */}
+          <span className="flex-1 truncate">{label}</span>
 
-      {/* Badge — optional notification count */}
-      {badge !== undefined && badge > 0 && (
-        <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-[11px] font-medium">
-          {badge > 99 ? "99+" : badge}
-        </span>
+          {/* Badge — optional notification count */}
+          {badge !== undefined && badge > 0 && (
+            <span className="flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-red-500 text-white text-[11px] font-medium">
+              {badge > 99 ? "99+" : badge}
+            </span>
+          )}
+        </>
       )}
     </Link>
   );

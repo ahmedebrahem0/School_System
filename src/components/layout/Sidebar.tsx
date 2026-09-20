@@ -19,8 +19,11 @@ import {
   CalendarCheck,
   UserCircle,
   TrendingUp,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { useSidebar } from "@/components/providers/SidebarProvider";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import { ROLES } from "@/constants/roles";
 import { ROUTES } from "@/constants/routes";
@@ -127,6 +130,7 @@ const NAV_CONFIG: Record<string, NavSection[]> = {
 const Sidebar = () => {
   const { user } = useAuth();
   const { logout } = useLogout();
+  const { isCollapsed, toggle } = useSidebar();
 
   // Avoid rendering navigation until the authenticated user is available.
   if (!user) return null;
@@ -139,30 +143,38 @@ const Sidebar = () => {
   const initials = getInitials(user.fullName);
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-[260px] bg-[#1E3A8A] flex flex-col z-40">
+    <aside
+      className={cn(
+        "fixed left-0 top-0 h-screen bg-[#1E3A8A] flex flex-col z-40",
+        "transition-[width] duration-200 ease-in-out",
+        isCollapsed ? "w-[76px]" : "w-[260px]"
+      )}
+    >
 
       {/* ─────────────────────────────────────────────
           LOGO AREA
           ───────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 h-16 px-6 border-b border-white/10 shrink-0">
+      <div className="flex items-center gap-3 h-16 px-6 border-b border-white/10 shrink-0 overflow-hidden">
         {/* Brand mark anchors the sidebar and keeps the product identity visible. */}
-        <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
           <GraduationCap className="w-5 h-5 text-white" />
         </div>
-        <div>
-          <p className="text-white font-bold text-[15px] leading-none">
-            EduSystem
-          </p>
-          <p className="text-white/40 text-[10px] mt-0.5">
-            Management Portal
-          </p>
-        </div>
+        {!isCollapsed && (
+          <div className="whitespace-nowrap">
+            <p className="text-white font-bold text-[15px] leading-none">
+              EduSystem
+            </p>
+            <p className="text-white/40 text-[10px] mt-0.5">
+              Management Portal
+            </p>
+          </div>
+        )}
       </div>
 
       {/* ─────────────────────────────────────────────
           USER PROFILE SECTION
           ───────────────────────────────────────────── */}
-      <div className="px-4 py-4 border-b border-white/10 shrink-0">
+      <div className="px-4 py-4 border-b border-white/10 shrink-0 overflow-hidden">
         <div className="flex items-center gap-3">
 
           {/* Avatar */}
@@ -175,19 +187,21 @@ const Sidebar = () => {
           </div>
 
           {/* User Info */}
-          <div className="flex-1 min-w-0">
-            <p className="text-white text-[14px] font-medium truncate">
-              {user.fullName}
-            </p>
-            {/* Role Badge */}
-            <span className={cn(
-              "inline-flex items-center px-2 py-0.5 rounded-full",
-              "text-[11px] font-medium mt-0.5",
-              "bg-white/15 text-white/80"
-            )}>
-              {roleMeta.label}
-            </span>
-          </div>
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-[14px] font-medium truncate">
+                {user.fullName}
+              </p>
+              {/* Role Badge */}
+              <span className={cn(
+                "inline-flex items-center px-2 py-0.5 rounded-full",
+                "text-[11px] font-medium mt-0.5",
+                "bg-white/15 text-white/80"
+              )}>
+                {roleMeta.label}
+              </span>
+            </div>
+          )}
 
         </div>
       </div>
@@ -202,13 +216,15 @@ const Sidebar = () => {
             <div key={section.label}>
 
               {/* Section Label */}
-              <p className="px-6 pt-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40">
-                {section.label}
-              </p>
+              {!isCollapsed && (
+                <p className="px-6 pt-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40 whitespace-nowrap">
+                  {section.label}
+                </p>
+              )}
 
               {/* Section Items */}
               {section.items.map((item) => (
-                <SidebarItem key={item.href} {...item} />
+                <SidebarItem key={item.href} {...item} collapsed={isCollapsed} />
               ))}
 
             </div>
@@ -219,15 +235,42 @@ const Sidebar = () => {
       </div>
 
       {/* ─────────────────────────────────────────────
+          COLLAPSE TOGGLE
+          ───────────────────────────────────────────── */}
+      <div className="px-4 pt-2 shrink-0">
+        <button
+          onClick={toggle}
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          className={cn(
+            "w-full flex items-center gap-3 px-3 py-2 rounded-lg",
+            "text-white/50 hover:text-white hover:bg-white/10",
+            "text-[13px] transition-all duration-150",
+            isCollapsed && "justify-center"
+          )}
+        >
+          {isCollapsed ? (
+            <ChevronsRight className="w-[16px] h-[16px] shrink-0" />
+          ) : (
+            <>
+              <ChevronsLeft className="w-[16px] h-[16px] shrink-0" />
+              <span>Collapse</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* ─────────────────────────────────────────────
           LOGOUT BUTTON
           ───────────────────────────────────────────── */}
       <div className="px-4 py-4 border-t border-white/10 shrink-0">
         <button
           onClick={logout}
+          title="Logout"
           className={cn(
             "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg",
             "text-white/60 hover:text-white hover:bg-white/10",
             "text-[14px] transition-all duration-150",
+            isCollapsed && "justify-center"
           )}
         >
           <svg
@@ -243,7 +286,7 @@ const Sidebar = () => {
               d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
             />
           </svg>
-          <span>Logout</span>
+          {!isCollapsed && <span>Logout</span>}
         </button>
       </div>
 
