@@ -29,14 +29,21 @@ export const useRegister = (): UseRegisterReturn => {
 
     try {
       // Send registration data to backend via RTK Query
-      await registerMutation(registerDto).unwrap();
+      const result = await registerMutation(registerDto).unwrap();
+      console.log("[DEBUG register] success result:", result);
 
       // Success → redirect to login
-      toast.success("Account created successfully! Please login.");
+      // Account has no role yet — an admin must assign one before the
+      // user can access the dashboard (they'll land on /pending on login).
+      toast.success(
+        "Account created! An admin needs to assign your role before you can sign in.",
+        { duration: 6000 }
+      );
       router.push(ROUTES.AUTH.LOGIN);
 
     } catch (error: unknown) {
       // RTK Query error shape
+      console.log("[DEBUG register] caught error:", JSON.stringify(error));
       const err = error as { data?: { message?: string } };
       toast.error(err.data?.message || "Registration failed. Please try again.");
     }

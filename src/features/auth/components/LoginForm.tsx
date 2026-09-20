@@ -17,7 +17,9 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils/cn";
 import { useLogin } from "../hooks/useLogin";
 import { loginSchema, type LoginSchema } from "../schema/login.schema";
+import { DemoLoginButtons } from "./DemoLoginButtons";
 import { ROUTES } from "@/constants/routes";
+import type { LoginFormData } from "../types";
 
 const LoginForm = () => {
   const { login, isLoading } = useLogin();
@@ -37,6 +39,10 @@ const LoginForm = () => {
 
   const onSubmit = async (data: LoginSchema) => {
     await login(data);
+  };
+
+  const handleDemoSelect = async (credentials: LoginFormData) => {
+    await login(credentials);
   };
 
   return (
@@ -196,6 +202,9 @@ const LoginForm = () => {
         </Button>
 
       </form>
+
+      {/* Demo Accounts — quick access for portfolio visitors */}
+      <DemoLoginButtons onSelect={handleDemoSelect} disabled={isLoading} />
 
       {/* Footer */}
       <p className="text-center text-sm text-zinc-500">
