@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Breadcrumbs from "./Breadcrumbs";
 import GlobalSearch from "./GlobalSearch";
+import { NotificationBell } from "@/features/notifications/components/NotificationBell";
 
 // ─────────────────────────────────────────────────────
 // HEADER PROPS
@@ -83,8 +84,10 @@ const Header = ({ onMenuClick }: HeaderProps) => {
         </div>
 
         {/* ─────────────────────────────────────────
-            RIGHT — User Dropdown
+            RIGHT — Notifications + User Dropdown
             ───────────────────────────────────────── */}
+        <div className="flex items-center gap-2">
+        <NotificationBell />
         <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
           <DropdownMenuTrigger asChild>
             <button
@@ -162,6 +165,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
 
       </div>
     </header>
