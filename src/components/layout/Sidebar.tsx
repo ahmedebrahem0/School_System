@@ -6,122 +6,15 @@
 
 "use client";
 
-import {
-  LayoutDashboard,
-  GraduationCap,
-  Users,
-  BookOpen,
-  ClipboardList,
-  BarChart3,
-  Shield,
-  UserCog,
-  School,
-  CalendarCheck,
-  UserCircle,
-  TrendingUp,
-  ChevronsLeft,
-  ChevronsRight,
-} from "lucide-react";
+import { GraduationCap, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { useLogout } from "@/features/auth/hooks/useLogout";
-import { ROLES } from "@/constants/roles";
-import { ROUTES } from "@/constants/routes";
+import { NAV_CONFIG } from "@/constants/nav-config";
 import { getInitials } from "@/lib/utils/formatters";
 import { ROLE_META } from "@/constants/roles";
 import { cn } from "@/lib/utils/cn";
-import SidebarItem, { type SidebarItemProps } from "./SidebarItem";
-import type { LucideIcon } from "lucide-react";
-
-// ─────────────────────────────────────────────────────
-// NAVIGATION CONFIG TYPES
-// ─────────────────────────────────────────────────────
-interface NavSection {
-  label: string;
-  items: SidebarItemProps[];
-}
-
-// Each section groups related links under the same sidebar heading.
-
-// ─────────────────────────────────────────────────────
-// NAVIGATION CONFIG PER ROLE
-// Single source of truth for all navigation items
-// ─────────────────────────────────────────────────────
-// Centralizes sidebar links so each role gets one predictable navigation shape.
-const NAV_CONFIG: Record<string, NavSection[]> = {
-  [ROLES.ADMIN]: [
-    // Admin links cover the full management surface of the school system.
-    {
-      label: "Overview",
-      items: [
-        { label: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
-      ],
-    },
-    {
-      label: "Management",
-      items: [
-        { label: "Students",  href: ROUTES.STUDENTS.LIST,  icon: GraduationCap },
-        { label: "Teachers",  href: ROUTES.TEACHERS.LIST,  icon: Users },
-        { label: "Classes",   href: ROUTES.CLASSES.LIST,   icon: School },
-        { label: "Subjects",  href: ROUTES.SUBJECTS.LIST,  icon: BookOpen },
-        { label: "Classrooms",  href: ROUTES.CLASSROOMS.LIST,  icon: School },
-      ],
-    },
-    {
-      label: "Academic",
-      items: [
-        { label: "Grades",      href: ROUTES.GRADES.LIST,      icon: TrendingUp },
-        { label: "Attendances", href: ROUTES.ATTENDANCES.LIST,  icon: CalendarCheck },
-        { label: "Time Slots",  href: ROUTES.TIME_SLOTS.LIST,   icon: ClipboardList },
-        { label: "Timetables",  href: ROUTES.TIMETABLES.LIST,   icon: CalendarCheck },
-        { label: "Reports",     href: ROUTES.REPORTS,           icon: BarChart3 },
-      ],
-    },
-    {
-      label: "System",
-      items: [
-        { label: "Users", href: ROUTES.ADMIN.USERS, icon: UserCog },
-        { label: "Roles", href: ROUTES.ADMIN.ROLES, icon: Shield },
-      ],
-    },
-  ],
-
-  [ROLES.TEACHER]: [
-    // Teacher links focus on the classroom work assigned to the signed-in teacher.
-    {
-      label: "Overview",
-      items: [
-        { label: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
-      ],
-    },
-    {
-      label: "My Work",
-      items: [
-        { label: "My Classes",   href: ROUTES.TEACHER.MY_CLASSES,   icon: School },
-        { label: "Grades",       href: ROUTES.TEACHER.GRADES,        icon: TrendingUp },
-        { label: "Attendances",  href: ROUTES.TEACHER.ATTENDANCES,   icon: CalendarCheck },
-      ],
-    },
-  ],
-
-  [ROLES.STUDENT]: [
-    // Student links stay scoped to personal academic data and profile views.
-    {
-      label: "Overview",
-      items: [
-        { label: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
-      ],
-    },
-    {
-      label: "My Academics",
-      items: [
-        { label: "My Profile",    href: ROUTES.STUDENT.MY_PROFILE,    icon: UserCircle },
-        { label: "My Grades",     href: ROUTES.STUDENT.MY_GRADES,     icon: ClipboardList },
-        { label: "My Attendance", href: ROUTES.STUDENT.MY_ATTENDANCE,  icon: CalendarCheck },
-      ],
-    },
-  ],
-};
+import SidebarItem from "./SidebarItem";
 
 // ─────────────────────────────────────────────────────
 // SIDEBAR COMPONENT
