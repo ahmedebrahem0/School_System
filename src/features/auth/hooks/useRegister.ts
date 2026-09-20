@@ -29,8 +29,7 @@ export const useRegister = (): UseRegisterReturn => {
 
     try {
       // Send registration data to backend via RTK Query
-      const result = await registerMutation(registerDto).unwrap();
-      console.log("[DEBUG register] success result:", result);
+      await registerMutation(registerDto).unwrap();
 
       // Success → redirect to login
       // Account has no role yet — an admin must assign one before the
@@ -42,10 +41,12 @@ export const useRegister = (): UseRegisterReturn => {
       router.push(ROUTES.AUTH.LOGIN);
 
     } catch (error: unknown) {
-      // RTK Query error shape
-      console.log("[DEBUG register] caught error:", JSON.stringify(error));
-      const err = error as { data?: { message?: string } };
-      toast.error(err.data?.message || "Registration failed. Please try again.");
+      // Backend replies in plain text, so the error payload is a string,
+      // not a JSON object — e.g. "Username is already taken."
+      const err = error as { data?: unknown };
+      const message =
+        typeof err.data === "string" ? err.data : "Registration failed. Please try again.";
+      toast.error(message);
     }
   };
 

@@ -14,13 +14,16 @@ export const authApi = baseApi.injectEndpoints({
     // ─────────────────────────────────────────────
     // REGISTER
     // Sends registration data directly to backend
-    // Returns success message or error
+    // Backend replies with a plain-text message (not JSON), so the
+    // default fetchBaseQuery JSON parsing must be overridden here —
+    // otherwise a successful 200 response fails with a JSON parse error.
     // ─────────────────────────────────────────────
-    register: builder.mutation<void, RegisterDto>({
+    register: builder.mutation<string, RegisterDto>({
       query: (data) => ({
         url: API_ENDPOINTS.AUTH.REGISTER,
         method: "POST",
         body: data,
+        responseHandler: "text",
       }),
     }),
 
