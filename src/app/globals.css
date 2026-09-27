@@ -97,6 +97,37 @@ body {
   }
 }
 
+/* Floating decorative shapes on the auth background — slow spin
+   combined with a gentle bob, so they read as alive without being
+   distracting. */
+@keyframes float-spin {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(180deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(360deg);
+  }
+}
+
+.animate-float-spin {
+  animation: float-spin 8s ease-in-out infinite;
+}
+
+.animate-float-spin-slow {
+  animation: float-spin 11s ease-in-out infinite;
+  animation-delay: -3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-spin,
+  .animate-float-spin-slow {
+    animation: none;
+  }
+}
+
 /* Sidebar nav items slide in from the side one after another on mount. */
 @keyframes sidebar-item-in {
   from {

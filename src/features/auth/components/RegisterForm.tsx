@@ -7,6 +7,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -85,32 +86,15 @@ const RegisterForm = () => {
 
       {/* Header */}
       <div className="space-y-2">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#1E3A8A] flex items-center justify-center">
-            <svg
-              className="w-6 h-6 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 14l9-5-9-5-9 5 9 5z"
-              />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 14l9-5-9-5-9 5 9 5zm0 0v6"
-              />
-            </svg>
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-zinc-950">EduSystem</h1>
-            <p className="text-xs text-zinc-500">Management Portal</p>
-          </div>
+        <div className="flex items-center">
+          <Image
+            src="/logo-school.png"
+            alt="EduSystem"
+            width={96}
+            height={96}
+            className="w-24 h-24 object-contain -m-4"
+            priority
+          />
         </div>
 
         <div className="pt-2">

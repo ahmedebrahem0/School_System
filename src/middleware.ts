@@ -126,10 +126,11 @@ export function middleware(request: NextRequest) {
 // ─────────────────────────────────────────────────────
 // MATCHER CONFIGURATION
 // Defines which routes the middleware runs on
-// Excludes: API routes, static files, images, favicon
+// Excludes: API routes, static files, images, favicon,
+// and any request for a file in /public (has an extension)
 // ─────────────────────────────────────────────────────
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.\\w+$).*)",
   ],
 };

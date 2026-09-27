@@ -69,7 +69,7 @@ export function DemoLoginButtons({ onSelect, disabled }: DemoLoginButtonsProps) 
             )}
           >
             <account.icon className="w-4 h-4" />
-            <span className="text-[12px] font-medium">{account.label}</span>
+            <span className="text-[12px] font-bold">{account.label}</span>
           </Button>
         ))}
       </div>

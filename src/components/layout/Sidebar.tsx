@@ -6,7 +6,8 @@
 
 "use client";
 
-import { GraduationCap, ChevronsLeft, ChevronsRight } from "lucide-react";
+import Image from "next/image";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { useLogout } from "@/features/auth/hooks/useLogout";
@@ -47,19 +48,28 @@ const Sidebar = () => {
       {/* ─────────────────────────────────────────────
           LOGO AREA
           ───────────────────────────────────────────── */}
-      <div className="flex items-center gap-3 h-16 px-6 border-b border-white/10 shrink-0 overflow-hidden">
+      <div className="flex items-center h-20 px-4 border-b border-white/10 shrink-0 overflow-hidden">
         {/* Brand mark anchors the sidebar and keeps the product identity visible. */}
-        <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
-          <GraduationCap className="w-5 h-5 text-white" />
-        </div>
-        {!isCollapsed && (
-          <div className="whitespace-nowrap">
-            <p className="text-white font-bold text-[15px] leading-none">
-              EduSystem
-            </p>
-            <p className="text-white/40 text-[10px] mt-0.5">
-              Management Portal
-            </p>
+        {isCollapsed ? (
+          <div className="w-11 h-11 rounded-lg bg-white flex items-center justify-center shrink-0 p-1">
+            <Image
+              src="/logo-school.png"
+              alt="EduSystem"
+              width={40}
+              height={40}
+              className="w-full h-full object-contain"
+            />
+          </div>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center py-1">
+            <Image
+              src="/logo-horizental.png"
+              alt="EduSystem"
+              width={320}
+              height={80}
+              className="w-full h-full object-contain scale-195"
+              priority
+            />
           </div>
         )}
       </div>
