@@ -30,6 +30,7 @@ const AuthLayoutContent = ({ children }: { children: React.ReactNode }) => {
         className={cn(
           "hidden lg:flex lg:w-[45%] bg-[#1E3A8A] relative overflow-hidden flex-col justify-between p-12",
           "transition-all duration-500 ease-in-out",
+          !isExiting && "animate-panel-in-left",
           isExiting && "-translate-x-full opacity-0"
         )}
       >
@@ -131,6 +132,7 @@ const AuthLayoutContent = ({ children }: { children: React.ReactNode }) => {
         className={cn(
           "flex-1 flex items-center justify-center p-6 lg:p-12 bg-white",
           "transition-all duration-500 ease-in-out",
+          !isExiting && "animate-panel-in-right",
           isExiting && "translate-x-full opacity-0"
         )}
       >

@@ -19,12 +19,13 @@ export interface SidebarItemProps {
   icon: LucideIcon;
   badge?: number; // Optional notification count
   collapsed?: boolean;
+  index?: number; // Position in the nav list, used to stagger the entrance animation
 }
 
 // ─────────────────────────────────────────────────────
 // SIDEBAR ITEM COMPONENT
 // ─────────────────────────────────────────────────────
-const SidebarItem = ({ label, href, icon: Icon, badge, collapsed }: SidebarItemProps) => {
+const SidebarItem = ({ label, href, icon: Icon, badge, collapsed, index = 0 }: SidebarItemProps) => {
   const pathname = usePathname();
 
   // Check if current route matches this item
@@ -41,6 +42,7 @@ const SidebarItem = ({ label, href, icon: Icon, badge, collapsed }: SidebarItemP
         "flex items-center gap-3 px-3 py-2.5 rounded-lg mx-2 my-0.5",
         "text-[14px] transition-all duration-150",
         collapsed && "justify-center",
+        "animate-sidebar-item-in",
 
         // Default state
         "text-white/65 hover:text-white/90 hover:bg-white/10",
@@ -51,6 +53,7 @@ const SidebarItem = ({ label, href, icon: Icon, badge, collapsed }: SidebarItemP
           !collapsed && "border-l-[3px] border-white/60 rounded-l-none",
         ]
       )}
+      style={{ animationDelay: `${Math.min(index * 60, 480)}ms` }}
     >
       {/* Icon */}
       <Icon

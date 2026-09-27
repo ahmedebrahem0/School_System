@@ -105,23 +105,26 @@ const Sidebar = () => {
           ───────────────────────────────────────────── */}
       <div className="relative flex-1 min-h-0">
         <nav className="h-full overflow-y-auto py-3 scrollbar-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {navSections.map((section) => (
-            <div key={section.label}>
+          {(() => {
+            let itemIndex = 0;
+            return navSections.map((section) => (
+              <div key={section.label}>
 
-              {/* Section Label */}
-              {!isCollapsed && (
-                <p className="px-6 pt-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40 whitespace-nowrap">
-                  {section.label}
-                </p>
-              )}
+                {/* Section Label */}
+                {!isCollapsed && (
+                  <p className="px-6 pt-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40 whitespace-nowrap">
+                    {section.label}
+                  </p>
+                )}
 
-              {/* Section Items */}
-              {section.items.map((item) => (
-                <SidebarItem key={item.href} {...item} collapsed={isCollapsed} />
-              ))}
+                {/* Section Items */}
+                {section.items.map((item) => (
+                  <SidebarItem key={item.href} {...item} collapsed={isCollapsed} index={itemIndex++} />
+                ))}
 
-            </div>
-          ))}
+              </div>
+            ));
+          })()}
         </nav>
         <div className="pointer-events-none absolute inset-x-0 top-0 h-5 bg-gradient-to-b from-[#1E3A8A] to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#1E3A8A] to-transparent" />
