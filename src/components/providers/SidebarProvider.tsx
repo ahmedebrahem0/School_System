@@ -29,7 +29,9 @@ export const SidebarProvider = ({ children }: { children: React.ReactNode }) => 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === "true") setIsCollapsed(true);
+      if (stored === "true") {
+        queueMicrotask(() => setIsCollapsed(true));
+      }
     } catch {
       // localStorage unavailable — fall back to expanded
     }

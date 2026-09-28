@@ -50,8 +50,10 @@ export function useNotifications() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setSeenIds(readSeenIds());
-    setHydrated(true);
+    queueMicrotask(() => {
+      setSeenIds(readSeenIds());
+      setHydrated(true);
+    });
   }, []);
 
   const allItems = useMemo<NotificationItem[]>(() => {

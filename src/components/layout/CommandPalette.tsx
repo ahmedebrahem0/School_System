@@ -47,9 +47,10 @@ export function CommandPalette() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    if (!open) setQuery("");
-  }, [open]);
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) setQuery("");
+  };
 
   const term = query.trim().toLowerCase();
 
@@ -86,7 +87,7 @@ export function CommandPalette() {
   if (!user) return null;
 
   return (
-    <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
+    <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay
           className={cn(

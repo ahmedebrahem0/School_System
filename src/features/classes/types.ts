@@ -21,10 +21,7 @@ export interface Classes {
  * Class object from GET /api/Classes/{id}
  * Single class with full details
  */
-export interface ClassDetails extends Classes {
-  // Same structure for now
-  // Will extend with nested data later if needed
-}
+export type ClassDetails = Classes;
 
 /**
  * Request body for POST /api/Classes
