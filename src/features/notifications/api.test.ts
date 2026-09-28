@@ -135,4 +135,19 @@ describe("notificationsApi", () => {
     expect(capturedBody).toEqual(data);
     expect(response.recipientCount).toBe(3);
   });
+
+  it("cancels a scheduled notification", async () => {
+    let method = "";
+    server.use(
+      http.delete("*/api/backend/api/Notifications/:id/cancel", ({ request }) => {
+        method = request.method;
+        return new HttpResponse(null, { status: 204 });
+      })
+    );
+    const store = createTestStore();
+    stores.push(store);
+
+    await store.dispatch(notificationsApi.endpoints.cancelScheduledNotification.initiate("scheduled-1")).unwrap();
+    expect(method).toBe("DELETE");
+  });
 });

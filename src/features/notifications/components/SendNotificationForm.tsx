@@ -24,7 +24,7 @@ import {
   useGetMyTeacherSubjectsQuery,
 } from "@/features/teachers/api";
 import { ROLES } from "@/constants/roles";
-import { useSendNotificationMutation } from "../api";
+import { useCancelScheduledNotificationMutation, useSendNotificationMutation } from "../api";
 import {
   sendNotificationSchema,
   type SendNotificationFormData,
@@ -86,10 +86,15 @@ export function SendNotificationForm() {
       priority: "Normal",
       targetType: defaultTarget,
       targetId: "",
+      deliveryMode: "Immediate",
+      scheduledAtLocal: "",
+      expiresAtLocal: "",
     },
   });
   const targetType = useWatch({ control: form.control, name: "targetType" });
+  const deliveryMode = useWatch({ control: form.control, name: "deliveryMode" });
   const [sendNotification, sendState] = useSendNotificationMutation();
+  const [cancelScheduled, cancelState] = useCancelScheduledNotificationMutation();
   const [receipt, setReceipt] = useState<SendNotificationResponse | null>(null);
   const [operationKey, setOperationKey] = useState<string | null>(null);
 
@@ -184,8 +189,10 @@ export function SendNotificationForm() {
     try {
       const result = await sendNotification({
         data: {
-          ...values,
+          title: values.title, message: values.message, type: values.type, priority: values.priority, targetType: values.targetType,
           targetId: values.targetType === "All" ? undefined : values.targetId,
+          scheduledAtUtc: values.deliveryMode === "Scheduled" ? new Date(values.scheduledAtLocal!).toISOString() : undefined,
+          expiresAtUtc: values.expiresAtLocal ? new Date(values.expiresAtLocal).toISOString() : undefined,
         },
         idempotencyKey: key,
       }).unwrap();
@@ -237,6 +244,14 @@ export function SendNotificationForm() {
           <FieldError message={form.formState.errors.message?.message} />
         </div>
 
+        <div className="space-y-2">
+          <Label>Delivery</Label>
+          <Controller control={form.control} name="deliveryMode" render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}><SelectTrigger aria-label="Delivery mode"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Immediate">Immediate</SelectItem><SelectItem value="Scheduled">Scheduled</SelectItem></SelectContent></Select>
+          )} />
+        </div>
+        {deliveryMode === "Scheduled" && <div className="space-y-2"><Label htmlFor="scheduled-at">Schedule time</Label><Input id="scheduled-at" type="datetime-local" {...form.register("scheduledAtLocal")} /><FieldError message={form.formState.errors.scheduledAtLocal?.message} /></div>}
+        <div className="space-y-2"><Label htmlFor="expires-at">Expiry (optional)</Label><Input id="expires-at" type="datetime-local" {...form.register("expiresAtLocal")} /><FieldError message={form.formState.errors.expiresAtLocal?.message} /></div>
         <div className="space-y-2">
           <Label>Type</Label>
           <Controller
@@ -349,11 +364,13 @@ export function SendNotificationForm() {
             <p className="text-[14px] font-semibold">
               {receipt.wasDuplicate ? "Already sent" : "Notification sent"}
             </p>
+            {receipt.status === "Scheduled" && receipt.scheduledAtUtc && <p className="text-[12px]">Scheduled for {new Date(receipt.scheduledAtUtc).toLocaleString()}</p>}
             <p className="text-[12px]">
               {receipt.recipientCount} recipient
               {receipt.recipientCount === 1 ? "" : "s"}
             </p>
           </div>
+          {receipt.status === "Scheduled" && <Button type="button" variant="outline" loading={cancelState.isLoading} onClick={async () => { try { await cancelScheduled(receipt.notificationId).unwrap(); setReceipt(null); toast.success("Scheduled notification cancelled"); } catch { toast.error("Scheduled notification could not be cancelled"); } }}>Cancel schedule</Button>}
         </div>
       )}
 

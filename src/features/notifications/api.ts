@@ -220,6 +220,10 @@ export const notificationsApi = baseApi.injectEndpoints({
               { type: "Notification" as const, id: "UNREAD_COUNT" },
             ],
     }),
+    cancelScheduledNotification: builder.mutation<void, string>({
+      query: (id) => ({ url: API_ENDPOINTS.NOTIFICATIONS.CANCEL(id), method: "DELETE" }),
+      invalidatesTags: [{ type: "Notification", id: "LIST" }],
+    }),
   }),
   overrideExisting: false,
 });
@@ -231,4 +235,5 @@ export const {
   useMarkAllNotificationsReadMutation,
   useDeleteNotificationMutation,
   useSendNotificationMutation,
+  useCancelScheduledNotificationMutation,
 } = notificationsApi;

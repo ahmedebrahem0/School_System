@@ -24,6 +24,7 @@ vi.mock("@/features/teachers/api", () => ({
 }));
 vi.mock("../api", () => ({
   useSendNotificationMutation: () => [send, { isLoading: false }],
+  useCancelScheduledNotificationMutation: () => [vi.fn(), { isLoading: false }],
 }));
 
 describe("SendNotificationForm", () => {
