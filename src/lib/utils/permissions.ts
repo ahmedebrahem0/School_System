@@ -18,6 +18,7 @@ const PERMISSIONS: Record<string, Role[]> = {
   attendances: [ROLES.ADMIN, ROLES.TEACHER],
   timetables: [ROLES.ADMIN, ROLES.TEACHER, ROLES.STUDENT],
   reports: [ROLES.ADMIN],
+  "send-notifications": [ROLES.ADMIN, ROLES.TEACHER],
 
   "my-profile": [ROLES.STUDENT, ROLES.TEACHER],
   "my-grades": [ROLES.STUDENT],

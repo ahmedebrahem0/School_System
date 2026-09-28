@@ -36,7 +36,7 @@ const PageHeader = ({
   return (
     <div
       className={cn(
-        "flex items-start justify-between",
+        "flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between",
         "pb-6 mb-6 border-b border-zinc-200 dark:border-white/10",
         className
       )}
@@ -79,7 +79,7 @@ const PageHeader = ({
 
       {/* Right — Action Buttons */}
       {actions && (
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           {actions}
         </div>
       )}

@@ -17,6 +17,7 @@ export const ROUTES = {
   DASHBOARD: "/dashboard",
 
   NOTIFICATIONS: "/notifications",
+  NOTIFICATIONS_SEND: "/notifications/send",
 
   // Admin only routes
   ADMIN: {

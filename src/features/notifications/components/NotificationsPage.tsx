@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Bell, CheckCheck } from "lucide-react";
+import { Bell, CheckCheck, Send } from "lucide-react";
 import { toast } from "sonner";
 import EmptyState from "@/components/common/EmptyState";
 import ErrorMessage from "@/components/common/ErrorMessage";
@@ -11,6 +12,8 @@ import Pagination from "@/components/common/Pagination";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { ROLES } from "@/constants/roles";
+import { ROUTES } from "@/constants/routes";
 import {
   useDeleteNotificationMutation,
   useGetNotificationsQuery,
@@ -119,6 +122,7 @@ export function NotificationsPage() {
 
   const items = inbox.data?.items ?? [];
   const total = inbox.data?.totalCount ?? 0;
+  const canSend = user?.role === ROLES.ADMIN || user?.role === ROLES.TEACHER;
 
   return (
     <div>
@@ -127,14 +131,24 @@ export function NotificationsPage() {
         subtitle="Review school activity and account updates"
         count={total}
         actions={
-          <Button
-            variant="outline"
-            onClick={() => void handleReadAll()}
-            disabled={markAllReadState.isLoading || total === 0}
-          >
-            <CheckCheck />
-            Mark all read
-          </Button>
+          <>
+            {canSend && (
+              <Button asChild>
+                <Link href={ROUTES.NOTIFICATIONS_SEND}>
+                  <Send />
+                  Send
+                </Link>
+              </Button>
+            )}
+            <Button
+              variant="outline"
+              onClick={() => void handleReadAll()}
+              disabled={markAllReadState.isLoading || total === 0}
+            >
+              <CheckCheck />
+              Mark all read
+            </Button>
+          </>
         }
       />
 

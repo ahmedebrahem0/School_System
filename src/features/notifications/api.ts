@@ -5,6 +5,8 @@ import type {
   NotificationFilters,
   NotificationItem,
   NotificationPage,
+  SendNotificationDto,
+  SendNotificationResponse,
   UnreadCountResponse,
 } from "./types";
 
@@ -197,6 +199,27 @@ export const notificationsApi = baseApi.injectEndpoints({
               { type: "Notification" as const, id: "UNREAD_COUNT" },
             ],
     }),
+
+    sendNotification: builder.mutation<
+      SendNotificationResponse,
+      { data: SendNotificationDto; idempotencyKey: string }
+    >({
+      query: ({ data, idempotencyKey }) => ({
+        url: API_ENDPOINTS.NOTIFICATIONS.SEND,
+        method: "POST",
+        body: data,
+        headers: {
+          "Idempotency-Key": idempotencyKey,
+        },
+      }),
+      invalidatesTags: (_, error) =>
+        error
+          ? []
+          : [
+              { type: "Notification" as const, id: "LIST" },
+              { type: "Notification" as const, id: "UNREAD_COUNT" },
+            ],
+    }),
   }),
   overrideExisting: false,
 });
@@ -207,4 +230,5 @@ export const {
   useMarkNotificationReadMutation,
   useMarkAllNotificationsReadMutation,
   useDeleteNotificationMutation,
+  useSendNotificationMutation,
 } = notificationsApi;

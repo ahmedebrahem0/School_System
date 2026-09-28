@@ -17,9 +17,14 @@ async function proxyRequest(request: NextRequest, context: ProxyContext) {
   const targetUrl = `${BACKEND_URL}/${path.join("/")}${search}`;
   const headers = new Headers();
   const contentType = request.headers.get("content-type");
+  const idempotencyKey = request.headers.get("idempotency-key");
 
   if (contentType) {
     headers.set("content-type", contentType);
+  }
+
+  if (idempotencyKey) {
+    headers.set("idempotency-key", idempotencyKey);
   }
 
   if (token) {

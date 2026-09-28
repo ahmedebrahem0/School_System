@@ -93,4 +93,46 @@ describe("notificationsApi", () => {
     expect(inbox.data?.items[0].isRead).toBe(false);
     expect(count.data?.count).toBe(1);
   });
+
+  it("sends one stable idempotency key with the payload", async () => {
+    let capturedKey: string | null = null;
+    let capturedBody: unknown;
+    server.use(
+      http.post("*/api/backend/api/Notifications/send", async ({ request }) => {
+        capturedKey = request.headers.get("Idempotency-Key");
+        capturedBody = await request.json();
+        return HttpResponse.json(
+          {
+            notificationId: "22222222-2222-2222-2222-222222222222",
+            recipientCount: 3,
+            wasDuplicate: false,
+          },
+          { status: 201 }
+        );
+      })
+    );
+    const store = createTestStore();
+    stores.push(store);
+    const data = {
+      title: "Exam tomorrow",
+      message: "Math exam starts at 09:00.",
+      type: "Announcement" as const,
+      priority: "High" as const,
+      targetType: "Class" as const,
+      targetId: "3",
+    };
+
+    const response = await store
+      .dispatch(
+        notificationsApi.endpoints.sendNotification.initiate({
+          data,
+          idempotencyKey: "operation-key-1",
+        })
+      )
+      .unwrap();
+
+    expect(capturedKey).toBe("operation-key-1");
+    expect(capturedBody).toEqual(data);
+    expect(response.recipientCount).toBe(3);
+  });
 });
