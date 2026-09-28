@@ -6,7 +6,10 @@ import type {
 } from "@reduxjs/toolkit/query";
 import { transformResponse } from "@/lib/utils/transformResponse";
 
-const BASE_URL = "/api/backend";
+const BASE_URL =
+  process.env.NODE_ENV === "test"
+    ? "http://localhost/api/backend"
+    : "/api/backend";
 const TOKEN_STORAGE_KEY = "token";
 
 const baseQuery = fetchBaseQuery({
@@ -59,6 +62,7 @@ export const baseApi = createApi({
     "ClassSubject",
     "Dashboard",
     "Grade",
+    "Notification",
     "Report",
     "Student",
     "Subject",

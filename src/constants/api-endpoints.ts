@@ -95,6 +95,16 @@ export const API_ENDPOINTS = {
     BY_ID: (id: number) => `/api/Attendances/${id}`,
   },
 
+  NOTIFICATIONS: {
+    GET_ALL: "/api/Notifications",
+    UNREAD_COUNT: "/api/Notifications/unread-count",
+    BY_ID: (id: string) => `/api/Notifications/${id}`,
+    READ: (id: string) => `/api/Notifications/${id}/read`,
+    READ_ALL: "/api/Notifications/read-all",
+    SEND: "/api/Notifications/send",
+    CANCEL: (id: string) => `/api/Notifications/${id}/cancel`,
+  },
+
   TIMETABLES: {
     GET_ALL: "/api/Timetables",
     BY_ID: (id: number) => `/api/Timetables/${id}`,
