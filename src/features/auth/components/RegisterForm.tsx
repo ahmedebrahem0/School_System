@@ -82,7 +82,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="w-full max-w-[480px] space-y-7">
+    <div className="w-full max-w-[480px] space-y-7 bg-white rounded-3xl shadow-2xl shadow-black/20 p-8">
 
       {/* Header */}
       <div className="space-y-2">
@@ -357,7 +357,7 @@ const RegisterForm = () => {
           type="submit"
           disabled={isLoading}
           className={cn(
-            "w-full h-11 bg-[#1E3A8A] hover:bg-[#1D4ED8]",
+            "w-full h-11 bg-[#1D4ED8] hover:bg-[#1E3A8A]",
             "text-white text-[15px] font-medium",
             "transition-colors duration-200 rounded-lg",
           )}

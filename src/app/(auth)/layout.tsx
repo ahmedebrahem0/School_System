@@ -11,6 +11,7 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { GraduationCap, Users, UserSquare2 } from "lucide-react";
 import {
   AuthTransitionProvider,
@@ -20,6 +21,7 @@ import { cn } from "@/lib/utils/cn";
 
 const AuthLayoutContent = ({ children }: { children: React.ReactNode }) => {
   const { isExiting } = useAuthTransition();
+  const pathname = usePathname();
 
   return (
     <div className="min-h-screen flex overflow-hidden relative">
@@ -119,7 +121,10 @@ const AuthLayoutContent = ({ children }: { children: React.ReactNode }) => {
           isExiting && "translate-x-full opacity-0"
         )}
       >
-        <div className="w-full max-w-[480px]">
+        <div
+          key={pathname}
+          className="w-full max-w-[480px] animate-auth-form-in"
+        >
           {children}
         </div>
       </div>

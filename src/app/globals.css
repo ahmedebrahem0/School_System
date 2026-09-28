@@ -97,6 +97,29 @@ body {
   }
 }
 
+/* Auth form swap — the login/register card fades and settles into
+   place whenever the route changes, instead of popping instantly. */
+@keyframes auth-form-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-auth-form-in {
+  animation: auth-form-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-auth-form-in {
+    animation: none;
+  }
+}
+
 /* Floating decorative shapes on the auth background — slow spin
    combined with a gentle bob, so they read as alive without being
    distracting. */
