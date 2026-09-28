@@ -54,14 +54,14 @@ const Pagination = <T,>({ result, onPageChange }: PaginationProps<T>) => {
   if (totalPages <= 1) return null;
 
   return (
-    <div className="flex items-center justify-between pt-4 mt-4 border-t border-zinc-100">
+    <div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between dark:border-white/10">
 
       {/* Left — Showing info */}
-      <p className="text-[13px] text-zinc-500">
+      <p className="text-[13px] text-zinc-500 dark:text-zinc-400">
         Showing{" "}
-        <span className="font-medium text-zinc-700">{from}–{to}</span>
+        <span className="font-medium text-zinc-700 dark:text-zinc-200">{from}–{to}</span>
         {" "}of{" "}
-        <span className="font-medium text-zinc-700">{total}</span>
+        <span className="font-medium text-zinc-700 dark:text-zinc-200">{total}</span>
         {" "}results
       </p>
 

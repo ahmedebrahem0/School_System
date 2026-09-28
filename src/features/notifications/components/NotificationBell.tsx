@@ -2,6 +2,7 @@
 
 "use client";
 
+import Link from "next/link";
 import { Bell, Inbox, RefreshCw } from "lucide-react";
 import {
   DropdownMenu,
@@ -9,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils/cn";
+import { ROUTES } from "@/constants/routes";
 import { useNotifications } from "../hooks/useNotifications";
 import { NotificationBellSkeleton } from "./NotificationBell.skeleton";
 import { NotificationListItem } from "./NotificationListItem";
@@ -124,6 +126,16 @@ export function NotificationBell() {
               />
             ))}
         </div>
+        {totalCount > 0 && (
+          <div className="border-t border-zinc-100 p-2 text-center dark:border-white/10">
+            <Link
+              href={ROUTES.NOTIFICATIONS}
+              className="block rounded-md px-3 py-2 text-[12px] font-medium text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-white/5"
+            >
+              View all notifications
+            </Link>
+          </div>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
