@@ -9,6 +9,7 @@ import { Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import StoreProvider from "@/components/providers/StoreProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { NotificationRealtimeProvider } from "@/features/notifications/components/NotificationRealtimeProvider";
 import "./globals.css";
 
 // ─────────────────────────────────────────────────────
@@ -48,7 +49,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
 
           {/* Auth Context — provides user data to all components */}
           <AuthProvider>
-            {children}
+            <NotificationRealtimeProvider>{children}</NotificationRealtimeProvider>
           </AuthProvider>
 
         </StoreProvider>

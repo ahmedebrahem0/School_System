@@ -6,29 +6,15 @@
 
 "use client";
 
-import { useRef } from "react";
 import { Provider } from "react-redux";
-import { AppStore, store } from "@/store";
+import { store } from "@/store";
 
 interface StoreProviderProps {
   children: React.ReactNode;
 }
 
-// useRef instead of direct store import
-// Ensures a single store instance  across the app
-// Prevents store from being recreated on every render
-const StoreProvider = ({ children }: StoreProviderProps) => {
-  const storeRef = useRef<AppStore | null>(null);
-
-  if (!storeRef.current) {
-    storeRef.current = store;
-  }
-
-  return (
-    <Provider store={storeRef.current}>
-      {children}
-    </Provider>
-  );
-};
+const StoreProvider = ({ children }: StoreProviderProps) => (
+  <Provider store={store}>{children}</Provider>
+);
 
 export default StoreProvider;

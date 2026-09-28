@@ -98,7 +98,7 @@ const SelectContent = React.forwardRef<
       ref={ref}
       className={cn(
         "relative z-50 max-h-96 min-w-[8rem] overflow-hidden",
-        "bg-white rounded-[10px] border border-zinc-200",
+        "bg-white rounded-[10px] border border-zinc-200 dark:border-white/10 dark:bg-[#111827]",
         "shadow-[0_4px_6px_rgba(0,0,0,0.06),0_2px_4px_rgba(0,0,0,0.04)]",
         // Animation
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
@@ -154,9 +154,9 @@ const SelectItem = React.forwardRef<
     className={cn(
       "relative flex w-full cursor-default select-none items-center",
       "rounded-[6px] py-2 pl-2 pr-8",
-      "text-[14px] text-zinc-700",
+      "text-[14px] text-zinc-700 dark:text-zinc-200",
       "outline-none",
-      "focus:bg-zinc-50 focus:text-zinc-900",
+      "focus:bg-zinc-50 focus:text-zinc-900 dark:focus:bg-white/10 dark:focus:text-white",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "transition-colors duration-100",
       className

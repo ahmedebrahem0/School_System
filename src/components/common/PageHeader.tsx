@@ -36,8 +36,8 @@ const PageHeader = ({
   return (
     <div
       className={cn(
-        "flex items-start justify-between",
-        "pb-6 mb-6 border-b border-zinc-200",
+        "flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between",
+        "pb-6 mb-6 border-b border-zinc-200 dark:border-white/10",
         className
       )}
     >
@@ -51,7 +51,7 @@ const PageHeader = ({
 
         {/* Title + Count Badge */}
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-zinc-950">
+          <h1 className="text-2xl font-bold text-zinc-950 dark:text-zinc-50">
             {title}
           </h1>
 
@@ -60,7 +60,7 @@ const PageHeader = ({
             <span className={cn(
               "inline-flex items-center justify-center",
               "px-2.5 py-0.5 rounded-full",
-              "bg-[#DBEAFE] text-[#1E3A8A]",
+              "bg-[#DBEAFE] text-[#1E3A8A] dark:bg-blue-500/15 dark:text-blue-300",
               "text-[13px] font-semibold"
             )}>
               {count}
@@ -70,7 +70,7 @@ const PageHeader = ({
 
         {/* Subtitle */}
         {supportingText && (
-          <p className="text-[14px] text-zinc-500">
+          <p className="text-[14px] text-zinc-500 dark:text-zinc-400">
             {supportingText}
           </p>
         )}
@@ -79,7 +79,7 @@ const PageHeader = ({
 
       {/* Right — Action Buttons */}
       {actions && (
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           {actions}
         </div>
       )}

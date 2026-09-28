@@ -13,7 +13,7 @@ export interface Teacher {
   classes: TeacherRelation[];
 }
 
-export interface TeacherDetails extends Teacher {}
+export type TeacherDetails = Teacher;
 
 export interface CreateTeacherDto {
   Name: string;

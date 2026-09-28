@@ -7,7 +7,7 @@ export interface Subject {
   classes: Array<{ id: number; name: string }>;
 }
 
-export interface SubjectDetails extends Subject {}
+export type SubjectDetails = Subject;
 
 export interface CreateSubjectDto {
   subjectName: string;

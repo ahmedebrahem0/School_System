@@ -33,8 +33,8 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored === "dark") {
-        setTheme("dark");
         document.documentElement.classList.add("dark");
+        queueMicrotask(() => setTheme("dark"));
       }
     } catch {
       // localStorage unavailable — fall back to light

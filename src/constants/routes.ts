@@ -16,6 +16,9 @@ export const ROUTES = {
   // Renders different content based on user role
   DASHBOARD: "/dashboard",
 
+  NOTIFICATIONS: "/notifications",
+  NOTIFICATIONS_SEND: "/notifications/send",
+
   // Admin only routes
   ADMIN: {
     USERS: "/admin/users",

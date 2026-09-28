@@ -86,6 +86,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
     } finally {
+      window.localStorage.removeItem("token");
       setUser(null);
       router.push(ROUTES.AUTH.LOGIN);
     }
