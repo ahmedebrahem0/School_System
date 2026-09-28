@@ -18,6 +18,7 @@ export const ROUTES = {
 
   NOTIFICATIONS: "/notifications",
   NOTIFICATIONS_SEND: "/notifications/send",
+  NOTIFICATION_SOUNDS: "/notifications/sounds",
 
   // Admin only routes
   ADMIN: {

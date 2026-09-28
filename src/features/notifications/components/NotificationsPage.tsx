@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Bell, CheckCheck, Send } from "lucide-react";
+import { AudioLines, Bell, CheckCheck, Send } from "lucide-react";
 import { toast } from "sonner";
 import EmptyState from "@/components/common/EmptyState";
 import ErrorMessage from "@/components/common/ErrorMessage";
@@ -132,6 +132,12 @@ export function NotificationsPage() {
         count={total}
         actions={
           <>
+            <Button asChild variant="outline">
+              <Link href={ROUTES.NOTIFICATION_SOUNDS}>
+                <AudioLines />
+                Sound lab
+              </Link>
+            </Button>
             {canSend && (
               <Button asChild>
                 <Link href={ROUTES.NOTIFICATIONS_SEND}>
