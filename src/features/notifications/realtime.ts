@@ -1,6 +1,7 @@
 import * as signalR from "@microsoft/signalr";
 import type { AppDispatch } from "@/store";
 import { notificationsApi } from "./api";
+import type { NotificationFilters, NotificationItem } from "./types";
 
 export interface NotificationConnection {
   start(): Promise<void>;
@@ -10,8 +11,25 @@ export interface NotificationConnection {
 }
 
 export function registerNotificationHandlers(connection: NotificationConnection, dispatch: AppDispatch) {
-  connection.on("NotificationCreated", (() => {
-    dispatch(notificationsApi.util.invalidateTags([{ type: "Notification", id: "LIST" }]));
+  connection.on("NotificationCreated", ((item: NotificationItem) => {
+    dispatch((innerDispatch, getState) => {
+      const args = notificationsApi.util.selectCachedArgsForQuery(getState(), "getNotifications");
+      args.forEach((filters) => {
+        const value = (filters ?? {}) as NotificationFilters;
+        const matches = (value.page ?? 1) === 1 &&
+          (value.isRead === undefined || value.isRead === item.isRead) &&
+          (!value.type || value.type === item.type) &&
+          (!value.priority || value.priority === item.priority);
+        if (!matches) return;
+        innerDispatch(notificationsApi.util.updateQueryData("getNotifications", filters, draft => {
+          const existing = draft.items.findIndex(entry => entry.id === item.id);
+          if (existing >= 0) draft.items.splice(existing, 1);
+          draft.items.unshift(item);
+          draft.items = draft.items.slice(0, value.pageSize ?? 20);
+          draft.totalCount += existing < 0 ? 1 : 0;
+        }));
+      });
+    });
   }) as (...args: never[]) => void);
   connection.on("UnreadCountChanged", ((payload: { count: number }) => {
     dispatch(notificationsApi.util.updateQueryData("getUnreadNotificationCount", undefined, draft => { draft.count = payload.count; }));

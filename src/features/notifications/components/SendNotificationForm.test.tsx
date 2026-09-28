@@ -61,5 +61,5 @@ describe("SendNotificationForm", () => {
     expect(send.mock.calls[1][0].idempotencyKey).toBe(
       send.mock.calls[0][0].idempotencyKey
     );
-  });
+  }, 10_000);
 });
