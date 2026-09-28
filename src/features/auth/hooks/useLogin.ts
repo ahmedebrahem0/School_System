@@ -65,7 +65,7 @@ export const useLogin = (): UseLoginReturn => {
       }
 
       setUser(result.user);
-      toast.success(`Welcome back, ${result.user.fullName}!`);
+      toast.success(`Welcome back, ${result.user.fullName}`);
 
       // Play the split-panel exit animation, then navigate once it's done.
       const callbackUrl = searchParams.get("callbackUrl");
