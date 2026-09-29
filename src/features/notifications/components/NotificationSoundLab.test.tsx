@@ -12,6 +12,8 @@ vi.mock("../notificationSounds", async (importOriginal) => {
   return {
     ...original,
     playNotificationSound: vi.fn(),
+    unlockNotificationAudio: vi.fn().mockResolvedValue(true),
+    isNotificationAudioUnlocked: vi.fn().mockReturnValue(true),
   };
 });
 
@@ -31,6 +33,7 @@ describe("NotificationSoundLab", () => {
     await user.click(screen.getByRole("button", { name: "Preview Soft Double Chime" }));
 
     expect(playNotificationSound).toHaveBeenCalledWith("soft-chime", 0.65);
+    expect(localStorage.getItem("notification-sound-id")).toBe("soft-chime");
     expect(screen.getByRole("button", { name: "Preview Soft Double Chime" })).toHaveAttribute(
       "aria-pressed",
       "true"

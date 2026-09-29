@@ -10,11 +10,36 @@ export interface SoundPlayback {
   stop: () => void;
 }
 
-const SOUND_DURATION: Record<NotificationSoundId, number> = {
-  "soft-chime": 0.7,
-  "minimal-pop": 0.32,
-  "gentle-bell": 0.9,
-};
+let audioContext: AudioContext | null = null;
+
+function getAudioContext() {
+  audioContext ??= new AudioContext();
+  return audioContext;
+}
+
+export function isNotificationAudioUnlocked() {
+  return audioContext?.state === "running";
+}
+
+export async function unlockNotificationAudio() {
+  try {
+    const context = getAudioContext();
+    if (context.state === "suspended") await context.resume();
+    return context.state === "running";
+  } catch {
+    return false;
+  }
+}
+
+export function createDeduplicatedNotificationPlayer(play: () => void, limit = 200) {
+  const seen = new Set<string>();
+  return (notification: { id: string }) => {
+    if (seen.has(notification.id)) return;
+    seen.add(notification.id);
+    if (seen.size > limit) seen.delete(seen.values().next().value!);
+    play();
+  };
+}
 
 function tone(
   context: AudioContext,
@@ -47,7 +72,8 @@ export function playNotificationSound(
   sound: NotificationSoundId,
   volume: number
 ): SoundPlayback {
-  const context = new AudioContext();
+  const context = getAudioContext();
+  if (context.state !== "running") return { stop: () => undefined };
   const master = context.createGain();
   const safeVolume = Math.min(1, Math.max(0, volume));
   const oscillators: OscillatorNode[] = [];
@@ -88,14 +114,8 @@ export function playNotificationSound(
     );
   }
 
-  const timer = window.setTimeout(
-    () => void context.close(),
-    SOUND_DURATION[sound] * 1000 + 120
-  );
-
   return {
     stop: () => {
-      window.clearTimeout(timer);
       for (const oscillator of oscillators) {
         try {
           oscillator.stop();
@@ -103,8 +123,6 @@ export function playNotificationSound(
           // The oscillator may already have completed naturally.
         }
       }
-      void context.close();
     },
   };
 }
-

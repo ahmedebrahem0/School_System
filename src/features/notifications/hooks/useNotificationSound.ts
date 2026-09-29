@@ -1,111 +1,117 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { playNotificationSound, type NotificationSoundId } from "../notificationSounds";
+import { useCallback, useSyncExternalStore } from "react";
+import {
+  isNotificationAudioUnlocked,
+  playNotificationSound,
+  unlockNotificationAudio,
+  type NotificationSoundId,
+} from "../notificationSounds";
 
 const STORAGE_SOUND_KEY = "notification-sound-id";
 const STORAGE_VOLUME_KEY = "notification-volume";
 const STORAGE_ENABLED_KEY = "notification-sound-enabled";
-const STORAGE_AUTOREPLAY_KEY = "notification-autoplay-permission";
+
+interface SoundSettings {
+  soundId: NotificationSoundId;
+  volume: number;
+  enabled: boolean;
+  hydrated: boolean;
+  audioUnlocked: boolean;
+}
+
+const serverSnapshot: SoundSettings = {
+  soundId: "gentle-bell",
+  volume: 65,
+  enabled: true,
+  hydrated: false,
+  audioUnlocked: false,
+};
+
+let snapshot = serverSnapshot;
+let initialized = false;
+const listeners = new Set<() => void>();
+
+function validSound(value: string | null): value is NotificationSoundId {
+  return value === "soft-chime" || value === "minimal-pop" || value === "gentle-bell";
+}
+
+function initialize() {
+  if (initialized || typeof window === "undefined") return;
+  initialized = true;
+  try {
+    const storedSound = localStorage.getItem(STORAGE_SOUND_KEY);
+    const storedVolumeValue = localStorage.getItem(STORAGE_VOLUME_KEY);
+    const storedVolume = Number(storedVolumeValue);
+    const storedEnabled = localStorage.getItem(STORAGE_ENABLED_KEY);
+    snapshot = {
+      soundId: validSound(storedSound) ? storedSound : "gentle-bell",
+      volume: Number.isFinite(storedVolume) && storedVolumeValue !== null
+        ? Math.max(0, Math.min(100, storedVolume))
+        : 65,
+      enabled: storedEnabled === null ? true : storedEnabled === "true",
+      hydrated: true,
+      audioUnlocked: isNotificationAudioUnlocked(),
+    };
+  } catch {
+    snapshot = { ...serverSnapshot, hydrated: true };
+  }
+}
+
+function emit(next: Partial<SoundSettings>) {
+  snapshot = { ...snapshot, ...next };
+  listeners.forEach((listener) => listener());
+}
+
+function subscribe(listener: () => void) {
+  initialize();
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+function getSnapshot() {
+  initialize();
+  return snapshot;
+}
 
 export function useNotificationSound() {
-  const [soundId, setSoundId] = useState<NotificationSoundId>("gentle-bell");
-  const [volume, setVolume] = useState(65);
-  const [enabled, setEnabled] = useState(true);
-  const [hasAutoplayPermission, setHasAutoplayPermission] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const settings = useSyncExternalStore(subscribe, getSnapshot, () => serverSnapshot);
 
-  // Load settings from localStorage on mount
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_SOUND_KEY) as NotificationSoundId | null;
-      if (saved && ["soft-chime", "minimal-pop", "gentle-bell"].includes(saved)) {
-        setSoundId(saved);
-      }
-
-      const savedVolume = localStorage.getItem(STORAGE_VOLUME_KEY);
-      if (savedVolume) setVolume(Math.max(0, Math.min(100, parseInt(savedVolume, 10))));
-
-      const savedEnabled = localStorage.getItem(STORAGE_ENABLED_KEY);
-      if (savedEnabled !== null) setEnabled(savedEnabled === "true");
-
-      const savedPermission = localStorage.getItem(STORAGE_AUTOREPLAY_KEY);
-      if (savedPermission !== null) setHasAutoplayPermission(savedPermission === "true");
-    } catch {
-      // ignore storage errors
-    }
-    setHydrated(true);
+  const changeSoundId = useCallback((soundId: NotificationSoundId) => {
+    emit({ soundId });
+    try { localStorage.setItem(STORAGE_SOUND_KEY, soundId); } catch { /* storage unavailable */ }
   }, []);
 
-  // Save sound ID to localStorage
-  const changeSoundId = useCallback((newId: NotificationSoundId) => {
-    setSoundId(newId);
-    try {
-      localStorage.setItem(STORAGE_SOUND_KEY, newId);
-    } catch {
-      // ignore
-    }
+  const changeVolume = useCallback((value: number) => {
+    const volume = Math.max(0, Math.min(100, value));
+    emit({ volume });
+    try { localStorage.setItem(STORAGE_VOLUME_KEY, String(volume)); } catch { /* storage unavailable */ }
   }, []);
 
-  // Save volume to localStorage
-  const changeVolume = useCallback((newVolume: number) => {
-    const clamped = Math.max(0, Math.min(100, newVolume));
-    setVolume(clamped);
-    try {
-      localStorage.setItem(STORAGE_VOLUME_KEY, String(clamped));
-    } catch {
-      // ignore
-    }
-  }, []);
-
-  // Toggle sound enabled/disabled
   const toggleEnabled = useCallback(() => {
-    setEnabled((prev) => {
-      const next = !prev;
-      try {
-        localStorage.setItem(STORAGE_ENABLED_KEY, String(next));
-      } catch {
-        // ignore
-      }
-      return next;
-    });
+    const enabled = !snapshot.enabled;
+    emit({ enabled });
+    try { localStorage.setItem(STORAGE_ENABLED_KEY, String(enabled)); } catch { /* storage unavailable */ }
   }, []);
 
-  // Grant autoplay permission by playing a test sound (requires user gesture)
-  const grantAutoplayPermission = useCallback(() => {
-    try {
-      playNotificationSound("gentle-bell", 0.01).stop(); // silent test
-      setHasAutoplayPermission(true);
-      localStorage.setItem(STORAGE_AUTOREPLAY_KEY, "true");
-    } catch {
-      // browser blocked autoplay
-    }
+  const grantAutoplayPermission = useCallback(async () => {
+    const audioUnlocked = await unlockNotificationAudio();
+    emit({ audioUnlocked });
+    return audioUnlocked;
   }, []);
 
-  // Play the selected sound
   const play = useCallback(() => {
-    if (!enabled || !hydrated) return;
-
-    // Check if browser tab is active
-    if (document.hidden) return;
-
-    try {
-      playNotificationSound(soundId, volume / 100);
-    } catch {
-      // audio context or browser restrictions
-    }
-  }, [soundId, volume, enabled, hydrated]);
+    if (!snapshot.enabled || !snapshot.hydrated || !isNotificationAudioUnlocked()) return;
+    playNotificationSound(snapshot.soundId, snapshot.volume / 100);
+  }, []);
 
   return {
-    soundId,
+    ...settings,
+    hasAutoplayPermission: settings.audioUnlocked,
     changeSoundId,
-    volume,
     changeVolume,
-    enabled,
     toggleEnabled,
-    play,
-    hasAutoplayPermission,
     grantAutoplayPermission,
-    hydrated,
+    play,
   };
 }

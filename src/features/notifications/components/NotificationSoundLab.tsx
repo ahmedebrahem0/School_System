@@ -10,6 +10,7 @@ import {
   type NotificationSoundId,
   type SoundPlayback,
 } from "../notificationSounds";
+import { useNotificationSound } from "../hooks/useNotificationSound";
 
 const SOUND_OPTIONS = [
   {
@@ -20,7 +21,7 @@ const SOUND_OPTIONS = [
     mood: "Warm & polished",
     accent: "emerald" as const,
     icon: Sparkles,
-    recommended: true,
+    recommended: false,
   },
   {
     id: "minimal-pop" as const,
@@ -40,7 +41,7 @@ const SOUND_OPTIONS = [
     mood: "Clear & graceful",
     accent: "amber" as const,
     icon: BellRing,
-    recommended: false,
+    recommended: true,
   },
 ];
 
@@ -69,8 +70,17 @@ const stopAfterMs: Record<NotificationSoundId, number> = {
 };
 
 export function NotificationSoundLab() {
-  const [volume, setVolume] = useState(65);
   const [playing, setPlaying] = useState<NotificationSoundId | null>(null);
+  const {
+    soundId,
+    volume,
+    enabled,
+    hydrated,
+    changeSoundId,
+    changeVolume,
+    toggleEnabled,
+    grantAutoplayPermission,
+  } = useNotificationSound();
   const playbackRef = useRef<SoundPlayback | null>(null);
   const timerRef = useRef<number | null>(null);
 
@@ -89,8 +99,11 @@ export function NotificationSoundLab() {
     []
   );
 
-  const preview = (id: NotificationSoundId) => {
+  const preview = async (id: NotificationSoundId) => {
     stopPreview();
+    const unlocked = await grantAutoplayPermission();
+    if (!unlocked) return;
+    changeSoundId(id);
     playbackRef.current = playNotificationSound(id, volume / 100);
     setPlaying(id);
     timerRef.current = window.setTimeout(() => {
@@ -104,7 +117,7 @@ export function NotificationSoundLab() {
     <div className="mx-auto max-w-6xl">
       <PageHeader
         title="Notification sound lab"
-        subtitle="Preview three generated tones. Nothing here changes live notifications yet."
+        subtitle="Choose the sound used when a new notification arrives."
       />
 
       <section
@@ -131,11 +144,15 @@ export function NotificationSoundLab() {
             min="0"
             max="100"
             value={volume}
-            onChange={(event) => setVolume(Number(event.target.value))}
+            onChange={(event) => changeVolume(Number(event.target.value))}
+            disabled={!enabled || !hydrated}
           />
           <output className="w-11 text-right text-sm font-bold tabular-nums text-[#1E3A8A] dark:text-blue-300">
             {volume}%
           </output>
+          <Button type="button" variant={enabled ? "outline" : "default"} size="sm" onClick={toggleEnabled} disabled={!hydrated}>
+            {enabled ? "Mute" : "Enable"}
+          </Button>
         </div>
       </section>
 
@@ -150,7 +167,7 @@ export function NotificationSoundLab() {
               key={sound.id}
               className={cn(
                 "relative flex min-h-72 flex-col overflow-hidden rounded-xl border bg-white p-5 shadow-sm transition-[border-color,box-shadow,transform] duration-200 dark:bg-[#111827]",
-                isPlaying
+                isPlaying || soundId === sound.id
                   ? cn("-translate-y-0.5 shadow-lg", styles.active)
                   : "border-zinc-200 hover:border-zinc-300 dark:border-white/10 dark:hover:border-white/20"
               )}
@@ -204,10 +221,11 @@ export function NotificationSoundLab() {
                   size="lg"
                   aria-label={`Preview ${sound.name}`}
                   aria-pressed={isPlaying}
-                  onClick={() => preview(sound.id)}
+                  onClick={() => void preview(sound.id)}
+                  disabled={!enabled || !hydrated}
                 >
                   <Play className={cn("size-4", isPlaying && "fill-current")} aria-hidden="true" />
-                  {isPlaying ? "Playing…" : "Preview"}
+                  {isPlaying ? "Playing…" : soundId === sound.id ? "Selected · Preview" : "Preview"}
                 </Button>
               </div>
             </article>
@@ -216,7 +234,7 @@ export function NotificationSoundLab() {
       </div>
 
       <p className="mt-5 text-center text-xs text-zinc-500 dark:text-zinc-400">
-        Audio begins only after you click Preview, as required by your browser.
+        Gentle Bell is the default. Your sound, volume, and mute preference are saved on this device.
       </p>
     </div>
   );
