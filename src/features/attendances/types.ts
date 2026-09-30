@@ -2,8 +2,10 @@ import type { AttendanceStatus } from "@/constants/attendance-status";
 
 export interface Attendance {
   attendanceId: number;
-  studentId: number;
+  studentId: number | null;
   studentName: string | null;
+  classId?: number | null;
+  className?: string | null;
   date: string | null;
   status: AttendanceStatus | null;
 }

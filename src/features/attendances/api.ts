@@ -27,6 +27,24 @@ export const attendancesApi = baseApi.injectEndpoints({
           : [{ type: "Attendance" as const, id: "LIST" }],
     }),
 
+    getTeacherAttendances: builder.query<Attendance[], void>({
+      query: () => ({
+        url: API_ENDPOINTS.ATTENDANCES.MY_CLASSES,
+        method: "GET",
+      }),
+      keepUnusedDataFor: CACHE_TIMES.NORMAL,
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ attendanceId }) => ({
+                type: "Attendance" as const,
+                id: attendanceId,
+              })),
+              { type: "Attendance" as const, id: "TEACHER_LIST" },
+            ]
+          : [{ type: "Attendance" as const, id: "TEACHER_LIST" }],
+    }),
+
     getAttendance: builder.query<Attendance, number>({
       query: (id) => ({
         url: API_ENDPOINTS.ATTENDANCES.BY_ID(id),
@@ -76,6 +94,7 @@ export const attendancesApi = baseApi.injectEndpoints({
 
 export const {
   useGetAttendancesQuery,
+  useGetTeacherAttendancesQuery,
   useGetAttendanceQuery,
   useCreateAttendanceMutation,
   useUpdateAttendanceMutation,

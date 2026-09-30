@@ -1,10 +1,15 @@
 import { useMemo, useState } from "react";
+import type { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { paginate, type PaginatedResult } from "@/types/api.types";
-import { useGetAttendancesQuery } from "../api";
+import {
+  useGetAttendancesQuery,
+  useGetTeacherAttendancesQuery,
+} from "../api";
 import type { Attendance } from "../types";
 
 interface UseAttendancesOptions {
   limit?: number;
+  scope?: "admin" | "teacher";
 }
 
 interface UseAttendancesReturn {
@@ -15,6 +20,8 @@ interface UseAttendancesReturn {
   isLoading: boolean;
   isFetching: boolean;
   isError: boolean;
+  errorStatus?: FetchBaseQueryError["status"];
+  errorMessage?: string;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   statusFilter: string;
@@ -31,14 +38,24 @@ interface UseAttendancesReturn {
 export const useAttendances = (
   options: UseAttendancesOptions = {}
 ): UseAttendancesReturn => {
-  const { limit = 10 } = options;
+  const { limit = 10, scope = "admin" } = options;
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQueryState] = useState("");
   const [statusFilter, setStatusFilterState] = useState("all");
   const [dateFilter, setDateFilterState] = useState("");
 
-  const { data, isLoading, isFetching, isError, refetch } =
-    useGetAttendancesQuery();
+  const adminQuery = useGetAttendancesQuery(undefined, {
+    skip: scope === "teacher",
+  });
+  const teacherQuery = useGetTeacherAttendancesQuery(undefined, {
+    skip: scope !== "teacher",
+  });
+  const { data, isLoading, isFetching, isError, error, refetch } =
+    scope === "teacher" ? teacherQuery : adminQuery;
+  const queryError = error as FetchBaseQueryError | undefined;
+  const errorData = queryError?.data as { message?: unknown } | undefined;
+  const errorMessage =
+    typeof errorData?.message === "string" ? errorData.message : undefined;
 
   const filteredAttendances = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -84,6 +101,8 @@ export const useAttendances = (
     isLoading,
     isFetching,
     isError,
+    errorStatus: queryError?.status,
+    errorMessage,
     searchQuery,
     setSearchQuery: resetPage(setSearchQueryState),
     statusFilter,

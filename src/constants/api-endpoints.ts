@@ -92,6 +92,7 @@ export const API_ENDPOINTS = {
 
   ATTENDANCES: {
     GET_ALL: "/api/Attendances",
+    MY_CLASSES: "/api/Attendances/my-classes",
     BY_ID: (id: number) => `/api/Attendances/${id}`,
   },
 

@@ -52,6 +52,8 @@ export function AttendancesManagementPage({
     filteredAttendances,
     isLoading,
     isError,
+    errorStatus,
+    errorMessage,
     searchQuery,
     setSearchQuery,
     statusFilter,
@@ -62,7 +64,14 @@ export function AttendancesManagementPage({
     clearFilters,
     setPage,
     refetch,
-  } = useAttendances();
+  } = useAttendances({ scope: teacherMode ? "teacher" : "admin" });
+
+  const loadErrorDescription =
+    errorStatus === 403
+      ? "You do not have permission to view these attendance records."
+      : errorStatus === 404
+        ? errorMessage ?? "Teacher profile was not found. Ask an administrator to link your account."
+        : errorMessage ?? "Attendance records are unavailable right now. Please try again.";
 
   const dates = useMemo(
     () =>
@@ -92,7 +101,9 @@ export function AttendancesManagementPage({
         }
       />
 
-      <AttendanceStats attendances={filteredAttendances} />
+      {!isLoading && !isError && (
+        <AttendanceStats attendances={filteredAttendances} />
+      )}
 
       {showForm && !teacherMode && (
         <Card>
@@ -125,11 +136,7 @@ export function AttendancesManagementPage({
           ) : isError ? (
             <ErrorMessage
               title="Attendance calendar could not be loaded"
-              description={
-                teacherMode
-                  ? "The backend currently blocks this attendance list for teacher accounts."
-                  : "Attendance records are unavailable right now."
-              }
+              description={loadErrorDescription}
               onRetry={refetch}
             />
           ) : filteredAttendances.length === 0 ? (
@@ -200,17 +207,19 @@ export function AttendancesManagementPage({
           ) : isError ? (
             <ErrorMessage
               title="Attendances could not be loaded"
-              description={
-                teacherMode
-                  ? "The backend returned 403 for teacher accounts on this list endpoint."
-                  : "Attendance records are unavailable right now."
-              }
+              description={loadErrorDescription}
               onRetry={refetch}
             />
           ) : attendances.length === 0 ? (
             <EmptyState
               title="No attendance records found"
-              description="Try changing filters or add the first attendance record."
+              description={
+                hasActiveFilters
+                  ? "Try changing or clearing the current filters."
+                  : teacherMode
+                    ? "Attendance records for your assigned classes will appear here."
+                    : "Add the first attendance record to get started."
+              }
             />
           ) : (
             <>
