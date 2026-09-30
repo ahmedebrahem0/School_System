@@ -44,7 +44,8 @@ const priorityStyles = {
   Urgent: "text-red-500",
 } as const;
 
-function formatCreatedAt(value: string) {
+function formatCreatedAt(value: string | null) {
+  if (!value) return "Recently";
   const date = new Date(value);
   return isValid(date) ? formatDistanceToNow(date, { addSuffix: true }) : "Recently";
 }

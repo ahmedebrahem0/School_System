@@ -24,7 +24,7 @@ export interface NotificationItem {
   message: string;
   type: NotificationType;
   priority: NotificationPriority;
-  createdAtUtc: string;
+  createdAtUtc: string | null;
   expiresAtUtc: string | null;
   relatedEntityType: string | null;
   relatedEntityId: string | null;
