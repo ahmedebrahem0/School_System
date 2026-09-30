@@ -5,20 +5,14 @@ import { AdminDashboard } from "@/features/dashboard/components/AdminDashboard";
 import { TeacherDashboard } from "@/features/dashboard/components/TeacherDashboard";
 import { StudentDashboard } from "@/features/dashboard/components/StudentDashboard";
 import PageHeader from "@/components/common/PageHeader";
-import { PageHeaderSkeleton, StatCardsSkeleton } from "@/components/ui/skeleton";
 import { ROLES } from "@/constants/roles";
 
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
-  if (!user) {
-    return (
-      <div className="space-y-6">
-        <PageHeaderSkeleton />
-        <StatCardsSkeleton />
-      </div>
-    );
-  }
+  // The role dashboard renders its own complete loading state. Avoid showing a
+  // smaller, unrelated four-card placeholder while auth hydrates first.
+  if (isLoading || !user) return null;
 
   return (
     <div className="space-y-6">
