@@ -22,6 +22,7 @@ export const ROUTES = {
 
   // Admin only routes
   ADMIN: {
+    ROOT: "/admin",
     USERS: "/admin/users",
     ROLES: "/admin/roles",
   },
