@@ -43,11 +43,14 @@ export function registerNotificationHandlers(connection: NotificationConnection,
 }
 
 export function createNotificationConnection(token: string): NotificationConnection {
-  const configured = process.env.NEXT_PUBLIC_BACKEND_URL!;
-  const base = typeof window !== "undefined" && window.location.protocol === "https:"
-    ? configured.replace(/^http:/, "https:") : configured;
   return new signalR.HubConnectionBuilder()
-    .withUrl(`${base}/hubs/notifications`, { accessTokenFactory: () => token })
+    .withUrl("/api/backend/hubs/notifications", {
+      accessTokenFactory: () => token,
+      // Keep the realtime requests on the app origin so they use the existing
+      // authenticated proxy and are not blocked by backend CORS. Route
+      // Handlers cannot guarantee a WebSocket upgrade, so use HTTP polling.
+      transport: signalR.HttpTransportType.LongPolling,
+    })
     .withAutomaticReconnect()
     .configureLogging(signalR.LogLevel.Warning)
     .build();
