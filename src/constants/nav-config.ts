@@ -5,6 +5,7 @@
 
 import {
   LayoutDashboard,
+  Map,
   GraduationCap,
   Users,
   BookOpen,
@@ -40,6 +41,7 @@ export const NAV_CONFIG: Record<string, NavSection[]> = {
       label: "Overview",
       items: [
         { label: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
+        { label: "System Map", href: ROUTES.SYSTEM_MAP, icon: Map },
       ],
     },
     {
@@ -77,6 +79,7 @@ export const NAV_CONFIG: Record<string, NavSection[]> = {
       label: "Overview",
       items: [
         { label: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
+        { label: "System Map", href: ROUTES.SYSTEM_MAP, icon: Map },
       ],
     },
     {
@@ -95,6 +98,7 @@ export const NAV_CONFIG: Record<string, NavSection[]> = {
       label: "Overview",
       items: [
         { label: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
+        { label: "System Map", href: ROUTES.SYSTEM_MAP, icon: Map },
       ],
     },
     {

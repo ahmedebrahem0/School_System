@@ -39,6 +39,11 @@ const ROUTE_PERMISSIONS: Record<string, string> = {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // The explanatory atlas is public for visitors and signed-in users alike.
+  if (pathname === ROUTES.SYSTEM_MAP) {
+    return NextResponse.next();
+  }
+
   // Read token and user from Cookies
   // These were set by the login Route Handler
   const token = request.cookies.get("token")?.value;

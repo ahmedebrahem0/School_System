@@ -15,6 +15,7 @@ export const ROUTES = {
   // Shared dashboard route
   // Renders different content based on user role
   DASHBOARD: "/dashboard",
+  SYSTEM_MAP: "/system-map",
 
   NOTIFICATIONS: "/notifications",
   NOTIFICATIONS_SEND: "/notifications/send",
@@ -109,6 +110,7 @@ export const ROUTES = {
 // Routes accessible without authentication
 // Used in middleware to skip auth check
 export const PUBLIC_ROUTES = [
+  ROUTES.SYSTEM_MAP,
   ROUTES.AUTH.LOGIN,
   ROUTES.AUTH.REGISTER,
   "/pending",

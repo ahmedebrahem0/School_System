@@ -11,7 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Eye, EyeOff, Lock, User } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, Lock, Map, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -194,6 +194,14 @@ const LoginForm = () => {
       <DemoLoginButtons onSelect={handleDemoSelect} disabled={isLoading} />
 
       {/* Footer */}
+      <Link
+        href={ROUTES.SYSTEM_MAP}
+        className="flex items-center justify-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800 transition-colors hover:bg-blue-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600"
+      >
+        <Map className="h-4 w-4" aria-hidden="true" />
+        Explore how the school works
+        <ArrowRight className="h-4 w-4" aria-hidden="true" />
+      </Link>
       <p className="text-center text-sm text-zinc-500">
         Don&apos;t have an account?{" "}
         <Link

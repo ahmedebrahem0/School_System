@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils/cn";
 import SidebarItem from "./SidebarItem";
 import {
   LayoutDashboard,
+  Map,
   Users,
   BookOpen,
   BarChart3,
@@ -39,6 +40,7 @@ const NAV_CONFIG = {
       label: "Overview",
       items: [
         { label: "Dashboard",   href: ROUTES.DASHBOARD,        icon: LayoutDashboard },
+        { label: "System Map", href: ROUTES.SYSTEM_MAP, icon: Map },
       ],
     },
     {
@@ -72,6 +74,7 @@ const NAV_CONFIG = {
       label: "Overview",
       items: [
         { label: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
+        { label: "System Map", href: ROUTES.SYSTEM_MAP, icon: Map },
       ],
     },
     {
@@ -89,6 +92,7 @@ const NAV_CONFIG = {
       label: "Overview",
       items: [
         { label: "Dashboard", href: ROUTES.DASHBOARD, icon: LayoutDashboard },
+        { label: "System Map", href: ROUTES.SYSTEM_MAP, icon: Map },
       ],
     },
     {
