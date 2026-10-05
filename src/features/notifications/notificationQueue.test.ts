@@ -5,12 +5,28 @@ import {
   createNotificationQueueState,
   dismissNotification,
   enqueueNotifications,
+  getNotificationToastCapacity,
+  getNotificationToastDuration,
+  NOTIFICATION_ENTRY_GAP_MS,
   reconcileNotificationCapacity,
 } from "./notificationQueue";
 
 const second = { ...notificationFixture, id: "second", title: "Second" };
 
 describe("notificationQueue", () => {
+  it("shows seven cards on a tall desktop and starts dismissing the first as the seventh arrives", () => {
+    const capacity = getNotificationToastCapacity(900, false);
+    expect(capacity).toBe(7);
+    expect(getNotificationToastDuration(capacity)).toBe(6 * NOTIFICATION_ENTRY_GAP_MS);
+  });
+
+  it("limits the stack to the viewport and keeps a readable minimum on small screens", () => {
+    expect(getNotificationToastCapacity(600, false)).toBe(4);
+    expect(getNotificationToastCapacity(844, true)).toBe(4);
+    expect(getNotificationToastCapacity(568, true)).toBe(4);
+    expect(getNotificationToastDuration(4)).toBe(2_600);
+  });
+
   it("queues unread notifications once per session", () => {
     const initial = enqueueNotifications(createNotificationQueueState(), [
       notificationFixture,

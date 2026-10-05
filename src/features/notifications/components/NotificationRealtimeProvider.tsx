@@ -13,8 +13,9 @@ import {
   createNotificationQueueState,
   dismissNotification,
   enqueueNotifications,
+  getNotificationToastCapacity,
+  getNotificationToastDuration,
   NOTIFICATION_ENTRY_GAP_MS,
-  NOTIFICATION_TOAST_DURATION_MS,
   reconcileNotificationCapacity,
 } from "../notificationQueue";
 import type { NotificationItem } from "../types";
@@ -28,7 +29,8 @@ export function NotificationRealtimeProvider({ children }: { children: React.Rea
   const [loadUnread] = useLazyGetNotificationsQuery();
   const [markRead] = useMarkNotificationReadMutation();
   const [queue, setQueue] = useState(createNotificationQueueState);
-  const [isMobile, setIsMobile] = useState(false);
+  const [maxVisible, setMaxVisible] = useState(1);
+  const lastAdmissionAt = useRef(0);
   const dismissTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const exitTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const soundedIds = useRef(new Set<string>());
@@ -86,14 +88,17 @@ export function NotificationRealtimeProvider({ children }: { children: React.Rea
   useEffect(() => {
     const media = window.matchMedia("(max-width: 639px)");
     const update = () => {
-      setIsMobile(media.matches);
-      setQueue((current) =>
-        reconcileNotificationCapacity(current, media.matches ? 1 : 3)
-      );
+      const capacity = getNotificationToastCapacity(window.innerHeight, media.matches);
+      setMaxVisible(capacity);
+      setQueue((current) => reconcileNotificationCapacity(current, capacity));
     };
     update();
     media.addEventListener("change", update);
-    return () => media.removeEventListener("change", update);
+    window.addEventListener("resize", update);
+    return () => {
+      media.removeEventListener("change", update);
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
   // A new authenticated identity is a new notification session. Fetching from
@@ -105,6 +110,7 @@ export function NotificationRealtimeProvider({ children }: { children: React.Rea
     exitTimers.current.forEach(clearTimeout);
     exitTimers.current.clear();
     soundedIds.current.clear();
+    lastAdmissionAt.current = 0;
     const resetTimer = setTimeout(() => {
       setQueue(createNotificationQueueState());
       setExitingIds(new Set());
@@ -139,13 +145,16 @@ export function NotificationRealtimeProvider({ children }: { children: React.Rea
 
   // Admit one card at a time so every card has a distinct entrance and sound.
   useEffect(() => {
-    const maxVisible = isMobile ? 1 : 3;
     if (queue.pending.length === 0 || queue.visible.length >= maxVisible) return;
+    const delay = lastAdmissionAt.current === 0
+      ? 80
+      : Math.max(0, lastAdmissionAt.current + NOTIFICATION_ENTRY_GAP_MS - Date.now());
     const timer = setTimeout(() => {
+      lastAdmissionAt.current = Date.now();
       setQueue((current) => admitNextNotification(current, maxVisible));
-    }, queue.visible.length === 0 ? 80 : NOTIFICATION_ENTRY_GAP_MS);
+    }, delay);
     return () => clearTimeout(timer);
-  }, [queue.pending.length, queue.visible.length, isMobile]);
+  }, [queue.pending.length, queue.visible.length, maxVisible]);
 
   useEffect(() => {
     queue.visible.forEach((item) => {
@@ -167,10 +176,10 @@ export function NotificationRealtimeProvider({ children }: { children: React.Rea
       if (dismissTimers.current.has(item.id)) return;
       dismissTimers.current.set(
         item.id,
-        setTimeout(() => dismiss(item.id), NOTIFICATION_TOAST_DURATION_MS)
+        setTimeout(() => dismiss(item.id), getNotificationToastDuration(maxVisible))
       );
     });
-  }, [queue.visible, dismiss]);
+  }, [queue.visible, dismiss, maxVisible]);
 
   useEffect(() => () => {
     dismissTimers.current.forEach(clearTimeout);
