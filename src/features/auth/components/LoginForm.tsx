@@ -21,6 +21,7 @@ import { loginSchema, type LoginSchema } from "../schema/login.schema";
 import { DemoLoginButtons } from "./DemoLoginButtons";
 import { ROUTES } from "@/constants/routes";
 import type { LoginFormData } from "../types";
+import styles from "./AuthForms.module.css";
 
 const LoginForm = () => {
   const { login, isLoading } = useLogin();
@@ -47,22 +48,22 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="w-full max-w-[420px] space-y-8 bg-white rounded-3xl shadow-2xl shadow-black/20 p-8">
+    <div className={cn("space-y-8 bg-white rounded-3xl shadow-2xl shadow-black/20 p-8", styles.card, styles.loginCard)}>
 
       {/* Header */}
-      <div className="space-y-2">
+      <div className={cn("space-y-2", styles.header)}>
         <div className="flex items-center">
           <Image
             src="/logo-school.png"
             alt="EduSystem"
             width={96}
             height={96}
-            className="w-24 h-24 object-contain -m-4"
+            className={cn("object-contain", styles.logo)}
             priority
           />
         </div>
 
-        <div className="pt-4">
+        <div className={cn("pt-4", styles.headerCopy)}>
           <h2 className="text-xl font-semibold text-zinc-900">
             Welcome back
           </h2>
@@ -73,10 +74,10 @@ const LoginForm = () => {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.loginForm}>
 
         {/* Username or Email Field */}
-        <div className="space-y-1.5">
+        <div className={styles.field}>
           <Label
             htmlFor="userNameOrEmail"
             className="text-[13px] font-medium text-zinc-700"
@@ -92,7 +93,8 @@ const LoginForm = () => {
               autoComplete="username"
               {...register("userNameOrEmail")}
               className={cn(
-                "pl-10 h-11 text-sm bg-white border-zinc-300",
+                "pl-10 text-sm bg-white border-zinc-300",
+                styles.control,
                 "focus-visible:ring-2 focus-visible:ring-blue-500/20",
                 "focus-visible:border-blue-500 transition-all",
                 errors.userNameOrEmail && "border-red-400 focus-visible:ring-red-100"
@@ -100,14 +102,14 @@ const LoginForm = () => {
             />
           </div>
           {errors.userNameOrEmail && (
-            <p className="text-[12px] text-red-500 mt-1">
+            <p className={cn("text-[12px] text-red-500 mt-1", styles.error)}>
               {errors.userNameOrEmail.message}
             </p>
           )}
         </div>
 
         {/* Password Field */}
-        <div className="space-y-1.5">
+        <div className={styles.field}>
           <Label
             htmlFor="password"
             className="text-[13px] font-medium text-zinc-700"
@@ -123,7 +125,8 @@ const LoginForm = () => {
               autoComplete="current-password"
               {...register("password")}
               className={cn(
-                "pl-10 pr-10 h-11 text-sm bg-white border-zinc-300",
+                "pl-10 pr-10 text-sm bg-white border-zinc-300",
+                styles.control,
                 "focus-visible:ring-2 focus-visible:ring-blue-500/20",
                 "focus-visible:border-blue-500 transition-all",
                 errors.password && "border-red-400 focus-visible:ring-red-100"
@@ -142,7 +145,7 @@ const LoginForm = () => {
             </button>
           </div>
           {errors.password && (
-            <p className="text-[12px] text-red-500 mt-1">
+            <p className={cn("text-[12px] text-red-500 mt-1", styles.error)}>
               {errors.password.message}
             </p>
           )}
@@ -153,7 +156,8 @@ const LoginForm = () => {
           type="submit"
           disabled={isLoading}
           className={cn(
-            "w-full h-11 bg-[#1D4ED8] hover:bg-[#1E3A8A]",
+            "w-full bg-[#1D4ED8] hover:bg-[#1E3A8A]",
+            styles.submit,
             "text-white text-[15px] font-medium",
             "transition-colors duration-200",
             "rounded-lg",
@@ -196,13 +200,13 @@ const LoginForm = () => {
       {/* Footer */}
       <Link
         href={ROUTES.SYSTEM_MAP}
-        className="flex items-center justify-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800 transition-colors hover:bg-blue-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600"
+        className={cn("flex items-center justify-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-medium text-blue-800 transition-colors hover:bg-blue-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600", styles.mapLink)}
       >
         <Map className="h-4 w-4" aria-hidden="true" />
         Explore how the school works
         <ArrowRight className="h-4 w-4" aria-hidden="true" />
       </Link>
-      <p className="text-center text-sm text-zinc-500">
+      <p className={cn("text-center text-sm text-zinc-500", styles.footer)}>
         Don&apos;t have an account?{" "}
         <Link
           href={ROUTES.AUTH.REGISTER}

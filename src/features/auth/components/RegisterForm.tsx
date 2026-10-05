@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils/cn";
 import { useRegister } from "../hooks/useRegister";
 import { registerSchema, type RegisterSchema } from "../schema/register.schema";
 import { ROUTES } from "@/constants/routes";
+import styles from "./AuthForms.module.css";
 
 // ─────────────────────────────────────────────────────
 // PASSWORD STRENGTH INDICATOR
@@ -82,22 +83,22 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="w-full max-w-[480px] space-y-7 bg-white rounded-3xl shadow-2xl shadow-black/20 p-8">
+    <div className={cn("space-y-7 bg-white rounded-3xl shadow-2xl shadow-black/20 p-8", styles.card, styles.registerCard)}>
 
       {/* Header */}
-      <div className="space-y-2">
+      <div className={cn("space-y-2", styles.header)}>
         <div className="flex items-center">
           <Image
             src="/logo-school.png"
             alt="EduSystem"
             width={96}
             height={96}
-            className="w-24 h-24 object-contain -m-4"
+            className={cn("object-contain", styles.logo)}
             priority
           />
         </div>
 
-        <div className="pt-2">
+        <div className={cn("pt-2", styles.headerCopy)}>
           <h2 className="text-xl font-semibold text-zinc-900">
             Create an account
           </h2>
@@ -108,13 +109,13 @@ const RegisterForm = () => {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.registerForm}>
 
         {/* Full Name + Username — 2 columns */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className={cn("grid grid-cols-2 gap-3", styles.fieldGrid)}>
 
           {/* Full Name */}
-          <div className="space-y-1.5">
+          <div className={styles.field}>
             <Label
               htmlFor="fullName"
               className="text-[13px] font-medium text-zinc-700"
@@ -129,7 +130,8 @@ const RegisterForm = () => {
                 placeholder="Ahmed Hassan"
                 {...register("fullName")}
                 className={cn(
-                  "pl-10 h-11 text-sm bg-white border-zinc-300",
+                  "pl-10 text-sm bg-white border-zinc-300",
+                  styles.control,
                   "focus-visible:ring-2 focus-visible:ring-blue-500/20",
                   "focus-visible:border-blue-500 transition-all",
                   errors.fullName && "border-red-400 focus-visible:ring-red-100"
@@ -137,14 +139,14 @@ const RegisterForm = () => {
               />
             </div>
             {errors.fullName && (
-              <p className="text-[12px] text-red-500">
+              <p className={cn("text-[12px] text-red-500", styles.error)}>
                 {errors.fullName.message}
               </p>
             )}
           </div>
 
           {/* Username */}
-          <div className="space-y-1.5">
+          <div className={styles.field}>
             <Label
               htmlFor="userName"
               className="text-[13px] font-medium text-zinc-700"
@@ -159,7 +161,8 @@ const RegisterForm = () => {
                 placeholder="ahmed123"
                 {...register("userName")}
                 className={cn(
-                  "pl-10 h-11 text-sm bg-white border-zinc-300",
+                  "pl-10 text-sm bg-white border-zinc-300",
+                  styles.control,
                   "focus-visible:ring-2 focus-visible:ring-blue-500/20",
                   "focus-visible:border-blue-500 transition-all",
                   errors.userName && "border-red-400 focus-visible:ring-red-100"
@@ -167,7 +170,7 @@ const RegisterForm = () => {
               />
             </div>
             {errors.userName && (
-              <p className="text-[12px] text-red-500">
+              <p className={cn("text-[12px] text-red-500", styles.error)}>
                 {errors.userName.message}
               </p>
             )}
@@ -176,10 +179,10 @@ const RegisterForm = () => {
         </div>
 
         {/* Email + Gender — 2 columns */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className={cn("grid grid-cols-2 gap-3", styles.fieldGrid)}>
 
           {/* Email */}
-          <div className="space-y-1.5">
+          <div className={styles.field}>
             <Label
               htmlFor="email"
               className="text-[13px] font-medium text-zinc-700"
@@ -194,7 +197,8 @@ const RegisterForm = () => {
                 placeholder="ahmed@example.com"
                 {...register("email")}
                 className={cn(
-                  "pl-10 h-11 text-sm bg-white border-zinc-300",
+                  "pl-10 text-sm bg-white border-zinc-300",
+                  styles.control,
                   "focus-visible:ring-2 focus-visible:ring-blue-500/20",
                   "focus-visible:border-blue-500 transition-all",
                   errors.email && "border-red-400 focus-visible:ring-red-100"
@@ -202,14 +206,14 @@ const RegisterForm = () => {
               />
             </div>
             {errors.email && (
-              <p className="text-[12px] text-red-500">
+              <p className={cn("text-[12px] text-red-500", styles.error)}>
                 {errors.email.message}
               </p>
             )}
           </div>
 
           {/* Gender */}
-          <div className="space-y-1.5">
+          <div className={styles.field}>
             <Label
               htmlFor="gender"
               className="text-[13px] font-medium text-zinc-700"
@@ -225,7 +229,8 @@ const RegisterForm = () => {
             >
               <SelectTrigger
                 className={cn(
-                  "h-11 text-sm bg-white border-zinc-300",
+                  "text-sm bg-white border-zinc-300",
+                  styles.control,
                   "focus:ring-2 focus:ring-blue-500/20",
                   "focus:border-blue-500 transition-all",
                   errors.gender && "border-red-400 focus:ring-red-100"
@@ -239,7 +244,7 @@ const RegisterForm = () => {
               </SelectContent>
             </Select>
             {errors.gender && (
-              <p className="text-[12px] text-red-500">
+              <p className={cn("text-[12px] text-red-500", styles.error)}>
                 {errors.gender.message}
               </p>
             )}
@@ -248,7 +253,7 @@ const RegisterForm = () => {
         </div>
 
         {/* Password */}
-        <div className="space-y-1.5">
+        <div className={styles.field}>
           <Label
             htmlFor="password"
             className="text-[13px] font-medium text-zinc-700"
@@ -263,7 +268,8 @@ const RegisterForm = () => {
               placeholder="Min 8 characters"
               {...register("password")}
               className={cn(
-                "pl-10 pr-10 h-11 text-sm bg-white border-zinc-300",
+                "pl-10 pr-10 text-sm bg-white border-zinc-300",
+                styles.control,
                 "focus-visible:ring-2 focus-visible:ring-blue-500/20",
                 "focus-visible:border-blue-500 transition-all",
                 errors.password && "border-red-400 focus-visible:ring-red-100"
@@ -283,7 +289,7 @@ const RegisterForm = () => {
 
           {/* Password Strength Indicator */}
           {passwordValue && (
-            <div className="space-y-1">
+            <div className={cn("space-y-1", styles.strength)}>
               <div className="flex gap-1">
                 {Array.from({ length: 4 }).map((_, i) => (
                   <div
@@ -306,14 +312,14 @@ const RegisterForm = () => {
           )}
 
           {errors.password && (
-            <p className="text-[12px] text-red-500">
+            <p className={cn("text-[12px] text-red-500", styles.error)}>
               {errors.password.message}
             </p>
           )}
         </div>
 
         {/* Confirm Password */}
-        <div className="space-y-1.5">
+        <div className={styles.field}>
           <Label
             htmlFor="confirmPassword"
             className="text-[13px] font-medium text-zinc-700"
@@ -328,7 +334,8 @@ const RegisterForm = () => {
               placeholder="Repeat your password"
               {...register("confirmPassword")}
               className={cn(
-                "pl-10 pr-10 h-11 text-sm bg-white border-zinc-300",
+                "pl-10 pr-10 text-sm bg-white border-zinc-300",
+                styles.control,
                 "focus-visible:ring-2 focus-visible:ring-blue-500/20",
                 "focus-visible:border-blue-500 transition-all",
                 errors.confirmPassword && "border-red-400 focus-visible:ring-red-100"
@@ -346,7 +353,7 @@ const RegisterForm = () => {
             </button>
           </div>
           {errors.confirmPassword && (
-            <p className="text-[12px] text-red-500">
+            <p className={cn("text-[12px] text-red-500", styles.error)}>
               {errors.confirmPassword.message}
             </p>
           )}
@@ -357,7 +364,8 @@ const RegisterForm = () => {
           type="submit"
           disabled={isLoading}
           className={cn(
-            "w-full h-11 bg-[#1D4ED8] hover:bg-[#1E3A8A]",
+            "w-full bg-[#1D4ED8] hover:bg-[#1E3A8A]",
+            styles.submit,
             "text-white text-[15px] font-medium",
             "transition-colors duration-200 rounded-lg",
           )}
@@ -391,7 +399,7 @@ const RegisterForm = () => {
       </form>
 
       {/* Footer */}
-      <p className="text-center text-sm text-zinc-500">
+      <p className={cn("text-center text-sm text-zinc-500", styles.footer)}>
         Already have an account?{" "}
         <Link
           href={ROUTES.AUTH.LOGIN}

@@ -1,0 +1,44 @@
+.root {
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.brandPanel,
+.formPanel,
+.formViewport {
+  min-height: 0;
+}
+
+.formPanel {
+  height: 100%;
+  padding: clamp(0.75rem, 2.5vw, 3rem);
+}
+
+.formViewport {
+  display: flex;
+  width: 100%;
+  max-width: 30rem;
+  max-height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 1024px) and (min-height: 701px) {
+  .formPanel {
+    padding-left: 0;
+    padding-right: clamp(2rem, 4vw, 5rem);
+  }
+}
+
+@media (max-height: 700px) {
+  .brandPanel {
+    display: none;
+  }
+
+  .formPanel {
+    justify-content: center;
+    padding: 0.5rem;
+  }
+}

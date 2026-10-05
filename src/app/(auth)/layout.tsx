@@ -18,13 +18,14 @@ import {
   useAuthTransition,
 } from "@/components/providers/AuthTransitionProvider";
 import { cn } from "@/lib/utils/cn";
+import styles from "./AuthLayout.module.css";
 
 const AuthLayoutContent = ({ children }: { children: React.ReactNode }) => {
   const { isExiting } = useAuthTransition();
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen flex overflow-hidden relative">
+    <div className={cn("flex relative", styles.root)}>
 
       {/* ─────────────────────────────────────────────
           BACKGROUND — school campus photo, full bleed
@@ -46,6 +47,7 @@ const AuthLayoutContent = ({ children }: { children: React.ReactNode }) => {
       <div
         className={cn(
           "hidden lg:flex lg:w-[45%] relative z-10 flex-col justify-start p-12",
+          styles.brandPanel,
           "transition-all duration-500 ease-in-out",
           !isExiting && "animate-panel-in-left",
           isExiting && "-translate-x-full opacity-0"
@@ -115,7 +117,8 @@ const AuthLayoutContent = ({ children }: { children: React.ReactNode }) => {
           ───────────────────────────────────────────── */}
       <div
         className={cn(
-          "flex-1 relative z-10 flex items-center justify-end p-6 lg:py-12 lg:pl-0 lg:pr-20",
+          "flex-1 relative z-10 flex items-center justify-end",
+          styles.formPanel,
           "transition-all duration-500 ease-in-out",
           !isExiting && "animate-panel-in-right",
           isExiting && "translate-x-full opacity-0"
@@ -123,7 +126,7 @@ const AuthLayoutContent = ({ children }: { children: React.ReactNode }) => {
       >
         <div
           key={pathname}
-          className="w-full max-w-[480px] animate-auth-form-in"
+          className={cn("animate-auth-form-in", styles.formViewport)}
         >
           {children}
         </div>
