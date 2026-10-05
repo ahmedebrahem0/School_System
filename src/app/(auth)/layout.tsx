@@ -89,7 +89,7 @@ const AuthLayoutContent = ({ children }: { children: React.ReactNode }) => {
               <div
                 key={stat.label}
                 className="backdrop-blur-2xl rounded-xl p-3 border border-white/25 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.25)] flex items-center gap-2"
-                style={{ backgroundColor: "#2196f375" }}
+                style={{ backgroundColor: "#00000075" }}
               >
                 <div className={cn("w-9 h-9 shrink-0 rounded-full flex items-center justify-center", stat.iconBg)}>
                   <stat.icon className="w-4 h-4 text-white" />
