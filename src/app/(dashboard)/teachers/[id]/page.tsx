@@ -67,10 +67,10 @@ function TeacherDetailContent() {
               Back
             </Button>
           </Link>
-          <PageHeader
+          {/* <PageHeader
             title={teacherName}
             subtitle={`Teacher ID: ${teacher.teacherId}`}
-          />
+          /> */}
         </div>
 
         {!showEditForm && (
