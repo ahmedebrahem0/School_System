@@ -33,14 +33,16 @@ export interface LoginHandlerResponse {
 // Shape 1: Login successful + role assigned
 export interface LoginSuccessResponse {
   token: string;
-  user: AuthUser;
+  roleStatus: "Active";
+  role: string;
+  user?: AuthUser;
 }
 
 // Shape 2: Login successful + role pending
 export interface LoginPendingResponse {
   token: string;
   roleStatus: "Pending";
-  message: string;
+  message?: string;
 }
 
 // Union type — backend can return either shape
