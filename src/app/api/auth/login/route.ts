@@ -8,9 +8,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { jwtDecode } from "jwt-decode";
 import { isPendingRole, type BackendLoginResponse } from "@/features/auth/types";
-import type { AuthUser, UserRole } from "@/types/api.types";
+import { toAuthUser } from "@/features/auth/auth-user";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL!;
 
@@ -20,45 +19,6 @@ const COOKIE_OPTIONS = {
   sameSite: "lax" as const,
   maxAge: 60 * 60,
   path: "/",
-};
-
-interface LoginTokenClaims {
-  sub?: string;
-  UserId?: string;
-  email?: string;
-  gender?: string;
-  fullName?: string;
-  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"?: string;
-  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"?: UserRole;
-}
-
-const toAuthUser = (data: BackendLoginResponse): AuthUser | null => {
-  if ("user" in data && data.user) {
-    return data.user;
-  }
-
-  const claims = jwtDecode<LoginTokenClaims>(data.token);
-  const role =
-    claims["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-
-  if (!role) {
-    return null;
-  }
-
-  const id =
-    claims.UserId ||
-    claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] ||
-    "";
-  const userName = claims.sub || claims.email || "User";
-
-  return {
-    id,
-    userName,
-    fullName: claims.fullName || userName,
-    email: claims.email || "",
-    gender: claims.gender || "",
-    role,
-  };
 };
 
 export async function POST(request: NextRequest) {
@@ -118,7 +78,10 @@ export async function POST(request: NextRequest) {
       { user, token: data.token },
       { status: 200 }
     );
-  } catch {
+  } catch (error) {
+    console.error("[auth/login] failed to process login request", {
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
     return NextResponse.json(
       { message: "Something went wrong. Please try again." },
       { status: 500 }
